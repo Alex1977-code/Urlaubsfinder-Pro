@@ -131,6 +131,27 @@ export function FilterSidebar({
       </FilterSection>
 
       <div className={inactive} aria-disabled={liveMode}>
+      <FilterSection title="Verpflegung">
+        {['All Inclusive', 'Vollpension', 'Dreiviertelpension', 'Halbpension', 'Frühstück'].map(
+          (board) => (
+            <CheckboxRow
+              key={board}
+              icon="🍽️"
+              label={board}
+              checked={filters.boards.includes(board)}
+              onChange={(checked) =>
+                set(
+                  'boards',
+                  checked
+                    ? [...filters.boards, board]
+                    : filters.boards.filter((b) => b !== board),
+                )
+              }
+            />
+          ),
+        )}
+      </FilterSection>
+
       <FilterSection title="Sonnenfaktor">
         <SliderRow
           label="Sonnenstunden/Tag"

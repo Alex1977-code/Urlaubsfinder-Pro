@@ -39,6 +39,7 @@ export const DEFAULT_FILTERS: Filters = {
   spa: false,
   parking: false,
   airports: [],
+  boards: [],
   minSunHours: 0,
   scoreLevels: {
     entertainment: 'any',
@@ -80,6 +81,7 @@ export function matchesFilters(offer: Offer, f: Filters): boolean {
     // Angebote ohne Anreiseflug (z. B. Auto-Anreise) bleiben bei Flughafen-Filter außen vor.
     if (!offer.departureAirports.some((a) => f.airports.includes(a))) return false
   }
+  if (f.boards.length > 0 && !f.boards.includes(offer.board)) return false
   if (offer.sunHoursPerDay < f.minSunHours) return false
   for (const key of SCORE_KEYS) {
     const level = f.scoreLevels[key]
@@ -154,6 +156,7 @@ export function countActiveFilters(f: Filters): number {
   if (f.spa) count++
   if (f.parking) count++
   if (f.airports.length > 0) count++
+  if (f.boards.length > 0) count++
   if (f.minSunHours > 0) count++
   count += SCORE_KEYS.filter((key) => f.scoreLevels[key] !== 'any').length
   return count

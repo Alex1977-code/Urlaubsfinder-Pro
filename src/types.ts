@@ -94,6 +94,8 @@ export interface Filters {
   parking: boolean
   /** leer = alle Abflughäfen */
   airports: string[]
+  /** Verpflegungsarten, leer = egal */
+  boards: string[]
   minSunHours: number
   scoreLevels: Record<ScoreKey, ScoreLevel>
 }

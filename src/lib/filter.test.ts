@@ -99,6 +99,12 @@ describe('matchesFilters', () => {
     expect(matchesFilters(eimerHotel, filters({ paperInToilet: false }))).toBe(true)
   })
 
+  it('filtert nach Verpflegung (Mehrfachauswahl, leer = egal)', () => {
+    expect(matchesFilters(baseOffer, filters({ boards: [] }))).toBe(true)
+    expect(matchesFilters(baseOffer, filters({ boards: ['All Inclusive'] }))).toBe(true)
+    expect(matchesFilters(baseOffer, filters({ boards: ['Frühstück', 'Halbpension'] }))).toBe(false)
+  })
+
   it('filtert nach LGBTQI+- und Vegan-Freundlichkeit', () => {
     expect(matchesFilters(baseOffer, filters({ lgbtqFriendly: true }))).toBe(true)
     expect(matchesFilters({ ...baseOffer, lgbtqFriendly: false }, filters({ lgbtqFriendly: true }))).toBe(false)
