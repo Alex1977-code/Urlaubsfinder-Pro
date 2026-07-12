@@ -160,6 +160,8 @@ export function OfferDetailDialog({
               {offer.amenities.whirlpool && <Badge>🛁 Whirlpool</Badge>}
               {offer.amenities.spa && <Badge>💆 Spa</Badge>}
               {offer.amenities.parking && <Badge>🅿️ Parkplätze</Badge>}
+              {offer.lgbtqFriendly && <Badge>🏳️‍🌈 LGBTQI+-freundlich</Badge>}
+              {offer.veganFriendly && <Badge tone="green">🌱 Vegan-freundlich</Badge>}
             </div>
 
             <div>

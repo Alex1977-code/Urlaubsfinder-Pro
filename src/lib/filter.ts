@@ -32,6 +32,8 @@ export const DEFAULT_FILTERS: Filters = {
   maxBeachDistance: null,
   familyOnly: false,
   paperInToilet: false,
+  lgbtqFriendly: false,
+  veganFriendly: false,
   pool: false,
   whirlpool: false,
   spa: false,
@@ -68,6 +70,8 @@ export function matchesFilters(offer: Offer, f: Filters): boolean {
   }
   if (f.familyOnly && !offer.familyHotel) return false
   if (f.paperInToilet && !offer.paperInToilet) return false
+  if (f.lgbtqFriendly && !offer.lgbtqFriendly) return false
+  if (f.veganFriendly && !offer.veganFriendly) return false
   if (f.pool && !offer.amenities.pool) return false
   if (f.whirlpool && !offer.amenities.whirlpool) return false
   if (f.spa && !offer.amenities.spa) return false
@@ -143,6 +147,8 @@ export function countActiveFilters(f: Filters): number {
   if (f.maxBeachDistance !== null) count++
   if (f.familyOnly) count++
   if (f.paperInToilet) count++
+  if (f.lgbtqFriendly) count++
+  if (f.veganFriendly) count++
   if (f.pool) count++
   if (f.whirlpool) count++
   if (f.spa) count++

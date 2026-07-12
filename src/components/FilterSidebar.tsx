@@ -155,6 +155,18 @@ export function FilterSidebar({
           checked={filters.paperInToilet}
           onChange={(v) => set('paperInToilet', v)}
         />
+        <CheckboxRow
+          icon="🏳️‍🌈"
+          label="LGBTQI+-freundlich"
+          checked={filters.lgbtqFriendly}
+          onChange={(v) => set('lgbtqFriendly', v)}
+        />
+        <CheckboxRow
+          icon="🌱"
+          label="Vegan-freundlich"
+          checked={filters.veganFriendly}
+          onChange={(v) => set('veganFriendly', v)}
+        />
       </FilterSection>
 
       <FilterSection title="Lage & Erlebnis">

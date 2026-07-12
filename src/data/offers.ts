@@ -20,6 +20,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 2.3,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: false,
     sunHoursPerDay: 10,
     scores: {
       entertainment: 8,
@@ -53,6 +55,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 3.2,
     paperInToilet: false,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 11,
     scores: {
       entertainment: 6,
@@ -86,6 +90,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 3.4,
     paperInToilet: false,
+    lgbtqFriendly: false,
+    veganFriendly: true,
     sunHoursPerDay: 11,
     scores: {
       entertainment: 10,
@@ -119,6 +125,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 4.6,
     paperInToilet: false,
+    lgbtqFriendly: false,
+    veganFriendly: false,
     sunHoursPerDay: 12,
     scores: {
       entertainment: 9,
@@ -152,6 +160,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 4.8,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 9,
     scores: {
       entertainment: 7,
@@ -185,6 +195,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 4.7,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: false,
     sunHoursPerDay: 9,
     scores: {
       entertainment: 8,
@@ -218,6 +230,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 3.3,
     paperInToilet: false,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 11,
     scores: {
       entertainment: 8,
@@ -251,6 +265,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 3.9,
     paperInToilet: false,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 12,
     scores: {
       entertainment: 9,
@@ -284,6 +300,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 4.2,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 7,
     scores: {
       entertainment: 6,
@@ -317,6 +335,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 3.1,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 10,
     scores: {
       entertainment: 6,
@@ -350,6 +370,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 6.2,
     paperInToilet: true,
+    lgbtqFriendly: false,
+    veganFriendly: true,
     sunHoursPerDay: 11,
     scores: {
       entertainment: 10,
@@ -383,6 +405,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 10.5,
     paperInToilet: true,
+    lgbtqFriendly: false,
+    veganFriendly: false,
     sunHoursPerDay: 9,
     scores: {
       entertainment: 4,
@@ -416,6 +440,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 11.5,
     paperInToilet: false,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 8,
     scores: {
       entertainment: 6,
@@ -449,6 +475,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 1.1,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 8,
     scores: {
       entertainment: 5,
@@ -482,6 +510,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 0,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 6,
     scores: {
       entertainment: 6,
@@ -515,6 +545,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 0,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 5,
     scores: {
       entertainment: 4,
@@ -548,6 +580,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 4.6,
     paperInToilet: false,
+    lgbtqFriendly: false,
+    veganFriendly: false,
     sunHoursPerDay: 12,
     scores: {
       entertainment: 8,
@@ -581,6 +615,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 2.3,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 10,
     scores: {
       entertainment: 7,
@@ -614,6 +650,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 4.6,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: false,
     sunHoursPerDay: 9,
     scores: {
       entertainment: 7,
@@ -647,6 +685,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 3.3,
     paperInToilet: false,
+    lgbtqFriendly: true,
+    veganFriendly: false,
     sunHoursPerDay: 11,
     scores: {
       entertainment: 8,
@@ -680,6 +720,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 2.4,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: false,
     sunHoursPerDay: 10,
     scores: {
       entertainment: 10,
@@ -713,6 +755,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 1.8,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: false,
     sunHoursPerDay: 9,
     scores: {
       entertainment: 6,
@@ -746,6 +790,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 2.6,
     paperInToilet: false,
+    lgbtqFriendly: true,
+    veganFriendly: false,
     sunHoursPerDay: 9,
     scores: {
       entertainment: 8,
@@ -779,6 +825,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 4.4,
     paperInToilet: false,
+    lgbtqFriendly: false,
+    veganFriendly: false,
     sunHoursPerDay: 10,
     scores: {
       entertainment: 7,
@@ -812,6 +860,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 3.3,
     paperInToilet: false,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 11,
     scores: {
       entertainment: 6,
@@ -845,6 +895,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 3.5,
     paperInToilet: false,
+    lgbtqFriendly: false,
+    veganFriendly: true,
     sunHoursPerDay: 11,
     scores: {
       entertainment: 9,
@@ -878,6 +930,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 4.8,
     paperInToilet: false,
+    lgbtqFriendly: false,
+    veganFriendly: false,
     sunHoursPerDay: 12,
     scores: {
       entertainment: 6,
@@ -911,6 +965,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 3.4,
     paperInToilet: false,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 11,
     scores: {
       entertainment: 5,
@@ -944,6 +1000,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 2.9,
     paperInToilet: false,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 10,
     scores: {
       entertainment: 7,
@@ -977,6 +1035,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 2.8,
     paperInToilet: false,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 10,
     scores: {
       entertainment: 8,
@@ -1010,6 +1070,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 3.1,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: false,
     sunHoursPerDay: 11,
     scores: {
       entertainment: 8,
@@ -1043,6 +1105,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 4.5,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 9,
     scores: {
       entertainment: 7,
@@ -1076,6 +1140,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 2.4,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: false,
     sunHoursPerDay: 10,
     scores: {
       entertainment: 5,
@@ -1109,6 +1175,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 0,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 6,
     scores: {
       entertainment: 5,
@@ -1142,6 +1210,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 2.5,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 10,
     scores: {
       entertainment: 6,
@@ -1175,6 +1245,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 2.2,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 10,
     scores: {
       entertainment: 7,
@@ -1208,6 +1280,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 3.0,
     paperInToilet: false,
+    lgbtqFriendly: false,
+    veganFriendly: false,
     sunHoursPerDay: 11,
     scores: {
       entertainment: 7,
@@ -1241,6 +1315,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 6.0,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: false,
     sunHoursPerDay: 10,
     scores: {
       entertainment: 8,
@@ -1274,6 +1350,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 9.8,
     paperInToilet: false,
+    lgbtqFriendly: true,
+    veganFriendly: false,
     sunHoursPerDay: 9,
     scores: {
       entertainment: 9,
@@ -1307,6 +1385,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 0,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 6,
     scores: {
       entertainment: 4,
@@ -1340,6 +1420,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 2.3,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: false,
     sunHoursPerDay: 10,
     scores: {
       entertainment: 7,
@@ -1373,6 +1455,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 2.3,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 10,
     scores: {
       entertainment: 5,
@@ -1406,6 +1490,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 1.9,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: false,
     sunHoursPerDay: 9,
     scores: {
       entertainment: 8,
@@ -1439,6 +1525,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 1.9,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 9,
     scores: {
       entertainment: 9,
@@ -1472,6 +1560,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 4.8,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 8,
     scores: {
       entertainment: 6,
@@ -1505,6 +1595,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 3.2,
     paperInToilet: false,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 11,
     scores: {
       entertainment: 8,
@@ -1538,6 +1630,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 2.9,
     paperInToilet: false,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 11,
     scores: {
       entertainment: 5,
@@ -1571,6 +1665,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 3.4,
     paperInToilet: false,
+    lgbtqFriendly: false,
+    veganFriendly: true,
     sunHoursPerDay: 11,
     scores: {
       entertainment: 9,
@@ -1604,6 +1700,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 4.4,
     paperInToilet: false,
+    lgbtqFriendly: false,
+    veganFriendly: true,
     sunHoursPerDay: 12,
     scores: {
       entertainment: 8,
@@ -1637,6 +1735,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 2.1,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 9,
     scores: {
       entertainment: 5,
@@ -1670,6 +1770,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 2.4,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: false,
     sunHoursPerDay: 10,
     scores: {
       entertainment: 9,
@@ -1703,6 +1805,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 1.2,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 9,
     scores: {
       entertainment: 7,
@@ -1736,6 +1840,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 1.4,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: false,
     sunHoursPerDay: 9,
     scores: {
       entertainment: 7,
@@ -1769,6 +1875,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 2.1,
     paperInToilet: false,
+    lgbtqFriendly: true,
+    veganFriendly: false,
     sunHoursPerDay: 10,
     scores: {
       entertainment: 7,
@@ -1802,6 +1910,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 3.0,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 10,
     scores: {
       entertainment: 6,
@@ -1835,6 +1945,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 3.1,
     paperInToilet: false,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 11,
     scores: {
       entertainment: 7,
@@ -1868,6 +1980,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 0,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 6,
     scores: {
       entertainment: 6,
@@ -1901,6 +2015,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 0,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 5,
     scores: {
       entertainment: 5,
@@ -1934,6 +2050,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 0,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 6,
     scores: {
       entertainment: 6,
@@ -1967,6 +2085,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 0,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 6,
     scores: {
       entertainment: 4,
@@ -2000,6 +2120,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 3.3,
     paperInToilet: false,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 11,
     scores: {
       entertainment: 9,
@@ -2033,6 +2155,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 2.9,
     paperInToilet: false,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 10,
     scores: {
       entertainment: 6,
@@ -2066,6 +2190,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 2.6,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 11,
     scores: {
       entertainment: 7,
@@ -2099,6 +2225,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 3.2,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: false,
     sunHoursPerDay: 11,
     scores: {
       entertainment: 6,
@@ -2132,6 +2260,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 3.3,
     paperInToilet: false,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 11,
     scores: {
       entertainment: 9,
@@ -2165,6 +2295,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 3.6,
     paperInToilet: false,
+    lgbtqFriendly: false,
+    veganFriendly: true,
     sunHoursPerDay: 11,
     scores: {
       entertainment: 9,
@@ -2198,6 +2330,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 4.6,
     paperInToilet: false,
+    lgbtqFriendly: false,
+    veganFriendly: false,
     sunHoursPerDay: 12,
     scores: {
       entertainment: 7,
@@ -2231,6 +2365,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 12.5,
     paperInToilet: false,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 8,
     scores: {
       entertainment: 6,
@@ -2264,6 +2400,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 11.5,
     paperInToilet: false,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 8,
     scores: {
       entertainment: 7,
@@ -2297,6 +2435,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 11.0,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 9,
     scores: {
       entertainment: 6,
@@ -2330,6 +2470,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 8.5,
     paperInToilet: false,
+    lgbtqFriendly: false,
+    veganFriendly: false,
     sunHoursPerDay: 9,
     scores: {
       entertainment: 7,
@@ -2363,6 +2505,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 10.3,
     paperInToilet: false,
+    lgbtqFriendly: true,
+    veganFriendly: false,
     sunHoursPerDay: 9,
     scores: {
       entertainment: 8,
@@ -2396,6 +2540,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 6.5,
     paperInToilet: true,
+    lgbtqFriendly: false,
+    veganFriendly: true,
     sunHoursPerDay: 11,
     scores: {
       entertainment: 6,
@@ -2429,6 +2575,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 1.6,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: false,
     sunHoursPerDay: 10,
     scores: {
       entertainment: 7,
@@ -2462,6 +2610,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 1.5,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 10,
     scores: {
       entertainment: 9,
@@ -2495,6 +2645,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 2.8,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 11,
     scores: {
       entertainment: 7,
@@ -2528,6 +2680,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 0,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 6,
     scores: {
       entertainment: 6,
@@ -2561,6 +2715,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 0,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 6,
     scores: {
       entertainment: 4,
@@ -2594,6 +2750,8 @@ export const OFFERS: Offer[] = [
     familyHotel: true,
     flightHours: 0,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: false,
     sunHoursPerDay: 6,
     scores: {
       entertainment: 5,
@@ -2627,6 +2785,8 @@ export const OFFERS: Offer[] = [
     familyHotel: false,
     flightHours: 0,
     paperInToilet: true,
+    lgbtqFriendly: true,
+    veganFriendly: true,
     sunHoursPerDay: 6,
     scores: {
       entertainment: 5,

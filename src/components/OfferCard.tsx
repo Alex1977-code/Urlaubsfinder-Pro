@@ -54,6 +54,8 @@ export function OfferCard({
             {offer.amenities.whirlpool && <Badge>🛁 Whirlpool</Badge>}
             {offer.amenities.spa && <Badge>💆 Spa</Badge>}
             {offer.amenities.parking && <Badge>🅿️ Parkplätze</Badge>}
+            {offer.lgbtqFriendly && <Badge>🏳️‍🌈 LGBTQI+-freundlich</Badge>}
+            {offer.veganFriendly && <Badge tone="green">🌱 Vegan-freundlich</Badge>}
             <Badge tone={offer.paperInToilet ? 'green' : 'amber'}>
               🚽 {offer.paperInToilet ? 'Papier in Toilette OK' : 'Papier in den Eimer'}
             </Badge>

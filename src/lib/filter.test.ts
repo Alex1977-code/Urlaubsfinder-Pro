@@ -26,6 +26,8 @@ const baseOffer: Offer = {
   familyHotel: true,
   flightHours: 3,
   paperInToilet: true,
+  lgbtqFriendly: true,
+  veganFriendly: false,
   sunHoursPerDay: 10,
   scores: {
     entertainment: 7,
@@ -95,6 +97,13 @@ describe('matchesFilters', () => {
     const eimerHotel = { ...baseOffer, paperInToilet: false }
     expect(matchesFilters(eimerHotel, filters({ paperInToilet: true }))).toBe(false)
     expect(matchesFilters(eimerHotel, filters({ paperInToilet: false }))).toBe(true)
+  })
+
+  it('filtert nach LGBTQI+- und Vegan-Freundlichkeit', () => {
+    expect(matchesFilters(baseOffer, filters({ lgbtqFriendly: true }))).toBe(true)
+    expect(matchesFilters({ ...baseOffer, lgbtqFriendly: false }, filters({ lgbtqFriendly: true }))).toBe(false)
+    expect(matchesFilters(baseOffer, filters({ veganFriendly: true }))).toBe(false)
+    expect(matchesFilters({ ...baseOffer, veganFriendly: true }, filters({ veganFriendly: true }))).toBe(true)
   })
 
   it('filtert nach Ausstattung (Pool, Whirlpool, Spa, Parkplätze, Familienhotel)', () => {

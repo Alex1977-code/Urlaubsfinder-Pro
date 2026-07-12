@@ -44,6 +44,10 @@ export interface Offer {
   flightHours: number
   /** Darf Toilettenpapier in die Toilette geworfen werden? */
   paperInToilet: boolean
+  /** LGBTQI+-freundliches Reiseziel (Rechtslage und Reiseklima) */
+  lgbtqFriendly: boolean
+  /** Gute vegane Auswahl in der Hotelküche */
+  veganFriendly: boolean
   /** Durchschnittliche Sonnenstunden pro Tag in der Saison */
   sunHoursPerDay: number
   scores: Record<ScoreKey, number>
@@ -82,6 +86,8 @@ export interface Filters {
   maxBeachDistance: number | null
   familyOnly: boolean
   paperInToilet: boolean
+  lgbtqFriendly: boolean
+  veganFriendly: boolean
   pool: boolean
   whirlpool: boolean
   spa: boolean
