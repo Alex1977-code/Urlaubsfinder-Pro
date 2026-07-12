@@ -7,6 +7,7 @@ import {
   payingTravellers,
   perPersonPrice,
   personFactor,
+  priceBreakdown,
   returnDate,
   totalPrice,
   travellersLabel,
@@ -17,8 +18,16 @@ import { OFFERS } from '../data/offers'
 const flugHotel = OFFERS.find((o) => o.id === 'mallorca-playa-esperanza')! // Hotel 620 € + Flug 169 €
 const bergHotel = OFFERS.find((o) => o.id === 'tirol-alpenresort')! // 990 €, kein Flug
 
-function trip(overrides: Partial<TripParams> = {}): TripParams {
-  return { ...DEFAULT_TRIP, ...overrides }
+/** Test-Helfer: adults/childAges landen in einem einzigen Zimmer. */
+function trip(
+  overrides: Partial<TripParams> & { adults?: number; childAges?: number[] } = {},
+): TripParams {
+  const { adults, childAges, ...rest } = overrides
+  return {
+    ...DEFAULT_TRIP,
+    rooms: [{ adults: adults ?? 2, childAges: childAges ?? [] }],
+    ...rest,
+  }
 }
 
 describe('personFactor', () => {
@@ -31,6 +40,16 @@ describe('personFactor', () => {
     expect(personFactor(trip({ adults: 2, childAges: [7] }))).toBe(2.7)
     expect(personFactor(trip({ adults: 2, childAges: [14] }))).toBe(3)
     expect(personFactor(trip({ adults: 1, childAges: [1, 7, 14] }))).toBe(2.7)
+  })
+
+  it('zählt Reisende über alle Zimmer hinweg', () => {
+    const zweiZimmer = trip({
+      rooms: [
+        { adults: 2, childAges: [] },
+        { adults: 1, childAges: [7] },
+      ],
+    })
+    expect(personFactor(zweiZimmer)).toBe(3.7)
   })
 })
 
@@ -73,6 +92,18 @@ describe('totalPrice', () => {
   it('payingTravellers zählt alle außer Kleinkindern', () => {
     expect(payingTravellers(trip({ adults: 2, childAges: [1, 7] }))).toBe(3)
   })
+
+  it('priceBreakdown schlüsselt Hotel, Flug und Gepäck auf', () => {
+    const breakdown = priceBreakdown(flugHotel, trip({ adults: 2, baggage: true }), 'package')
+    expect(breakdown.hotel).toBe(620 * 2)
+    expect(breakdown.flight).toBe(169 * 2)
+    expect(breakdown.baggage).toBe(BAGGAGE_FEE * 2)
+    expect(breakdown.total).toBe(breakdown.hotel + breakdown.flight + breakdown.baggage)
+    // Nur Hotel: kein Flug- und Gepäckanteil
+    const nurHotel = priceBreakdown(flugHotel, trip({ adults: 2, baggage: true }), 'hotel')
+    expect(nurHotel.flight).toBe(0)
+    expect(nurHotel.baggage).toBe(0)
+  })
 })
 
 describe('Datums-Helfer', () => {
@@ -91,6 +122,16 @@ describe('Beschriftungen', () => {
     expect(travellersLabel(trip({ adults: 2, childAges: [] }))).toBe('2 Erw.')
     expect(travellersLabel(trip({ adults: 2, childAges: [7] }))).toBe('2 Erw. · 1 Kind (7 J.)')
     expect(travellersLabel(trip({ adults: 1, childAges: [3, 9] }))).toBe('1 Erw. · 2 Kinder (3, 9 J.)')
+  })
+
+  it('travellersLabel zeigt die Zimmeranzahl bei mehreren Zimmern', () => {
+    const zweiZimmer = trip({
+      rooms: [
+        { adults: 2, childAges: [] },
+        { adults: 1, childAges: [7] },
+      ],
+    })
+    expect(travellersLabel(zweiZimmer)).toBe('2 Zimmer · 3 Erw. · 1 Kind (7 J.)')
   })
 
   it('tripSummary enthält Datum mit Flexibilität, Dauer, Reisende und Gepäck', () => {

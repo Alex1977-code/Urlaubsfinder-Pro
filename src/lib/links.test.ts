@@ -10,8 +10,7 @@ const trip = {
   ...DEFAULT_TRIP,
   departureDate: '2026-08-15',
   nights: 7,
-  adults: 2,
-  childAges: [7, 10],
+  rooms: [{ adults: 2, childAges: [7, 10] }],
 }
 
 describe('bookingUrl', () => {
@@ -35,6 +34,19 @@ describe('bookingUrl', () => {
     const url = bookingUrl(offer, { ...trip, departureDate: null })
     expect(url).not.toContain('checkin=')
     expect(url).toContain('group_adults=2')
+  })
+
+  it('überträgt mehrere Zimmer mit Gesamt-Reisenden', () => {
+    const url = bookingUrl(offer, {
+      ...trip,
+      rooms: [
+        { adults: 2, childAges: [] },
+        { adults: 1, childAges: [7] },
+      ],
+    })
+    expect(url).toContain('no_rooms=2')
+    expect(url).toContain('group_adults=3')
+    expect(url).toContain('group_children=1')
   })
 })
 

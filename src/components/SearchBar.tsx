@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Flexibility, TravelType, TripParams } from '../types'
+import type { Flexibility, RoomOccupancy, TravelType, TripParams } from '../types'
 import { FLEX_LABELS, NIGHT_OPTIONS, travellersLabel } from '../lib/trip'
 
 const TRAVEL_TYPES: { value: TravelType | 'all'; label: string; icon: string }[] = [
@@ -50,6 +50,73 @@ function Stepper({
   )
 }
 
+function RoomEditor({
+  room,
+  index,
+  showTitle,
+  onChange,
+}: {
+  room: RoomOccupancy
+  index: number
+  showTitle: boolean
+  onChange: (room: RoomOccupancy) => void
+}) {
+  const setChildCount = (count: number) => {
+    const childAges = [...room.childAges]
+    while (childAges.length < count) childAges.push(7)
+    onChange({ ...room, childAges: childAges.slice(0, count) })
+  }
+
+  return (
+    <div className={showTitle ? 'mt-3 border-t border-slate-100 pt-3' : ''}>
+      {showTitle && (
+        <p className="mb-1.5 text-xs font-bold tracking-wide text-sky-900/60 uppercase">
+          Zimmer {index + 1}
+        </p>
+      )}
+      <Stepper
+        label="Erwachsene"
+        value={room.adults}
+        min={1}
+        max={4}
+        onChange={(adults) => onChange({ ...room, adults })}
+      />
+      <div className="mt-2">
+        <Stepper
+          label="Kinder (0–17 J.)"
+          value={room.childAges.length}
+          min={0}
+          max={3}
+          onChange={setChildCount}
+        />
+      </div>
+      {room.childAges.map((age, childIndex) => (
+        <label
+          key={childIndex}
+          className="mt-2 flex items-center justify-between gap-3 text-sm text-slate-600"
+        >
+          Alter Kind {childIndex + 1}
+          <select
+            value={age}
+            onChange={(e) => {
+              const childAges = [...room.childAges]
+              childAges[childIndex] = Number(e.target.value)
+              onChange({ ...room, childAges })
+            }}
+            className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm"
+          >
+            {Array.from({ length: 18 }, (_, i) => (
+              <option key={i} value={i}>
+                {i} {i === 1 ? 'Jahr' : 'Jahre'}
+              </option>
+            ))}
+          </select>
+        </label>
+      ))}
+    </div>
+  )
+}
+
 function TravellerPicker({
   trip,
   onChange,
@@ -59,10 +126,10 @@ function TravellerPicker({
 }) {
   const [open, setOpen] = useState(false)
 
-  const setChildCount = (count: number) => {
-    const childAges = [...trip.childAges]
-    while (childAges.length < count) childAges.push(7)
-    onChange({ ...trip, childAges: childAges.slice(0, count) })
+  const setRoomCount = (count: number) => {
+    const rooms = [...trip.rooms]
+    while (rooms.length < count) rooms.push({ adults: 2, childAges: [] })
+    onChange({ ...trip, rooms: rooms.slice(0, count) })
   }
 
   return (
@@ -79,47 +146,22 @@ function TravellerPicker({
       {open && (
         <div
           role="dialog"
-          aria-label="Reisende auswählen"
-          className="absolute z-20 mt-2 w-72 max-w-[calc(100vw-3rem)] rounded-xl border border-slate-200 bg-white p-4 shadow-xl"
+          aria-label="Zimmer und Reisende auswählen"
+          className="absolute z-20 mt-2 max-h-[70vh] w-72 max-w-[calc(100vw-3rem)] overflow-y-auto rounded-xl border border-slate-200 bg-white p-4 shadow-xl"
         >
-          <Stepper
-            label="Erwachsene"
-            value={trip.adults}
-            min={1}
-            max={6}
-            onChange={(adults) => onChange({ ...trip, adults })}
-          />
-          <div className="mt-3">
-            <Stepper
-              label="Kinder (0–17 J.)"
-              value={trip.childAges.length}
-              min={0}
-              max={4}
-              onChange={setChildCount}
-            />
-          </div>
-          {trip.childAges.map((age, index) => (
-            <label
+          <Stepper label="Zimmer" value={trip.rooms.length} min={1} max={4} onChange={setRoomCount} />
+          {trip.rooms.map((room, index) => (
+            <RoomEditor
               key={index}
-              className="mt-2 flex items-center justify-between gap-3 text-sm text-slate-600"
-            >
-              Alter Kind {index + 1}
-              <select
-                value={age}
-                onChange={(e) => {
-                  const childAges = [...trip.childAges]
-                  childAges[index] = Number(e.target.value)
-                  onChange({ ...trip, childAges })
-                }}
-                className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm"
-              >
-                {Array.from({ length: 18 }, (_, i) => (
-                  <option key={i} value={i}>
-                    {i} {i === 1 ? 'Jahr' : 'Jahre'}
-                  </option>
-                ))}
-              </select>
-            </label>
+              room={room}
+              index={index}
+              showTitle={trip.rooms.length > 1}
+              onChange={(updated) => {
+                const rooms = [...trip.rooms]
+                rooms[index] = updated
+                onChange({ ...trip, rooms })
+              }}
+            />
           ))}
           <button
             type="button"

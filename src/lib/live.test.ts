@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { haversineKm, nominatimUrl, overpassQuery, parseOverpassHotels } from './live'
+import { filterByStars, haversineKm, nominatimUrl, overpassQuery, parseOverpassHotels } from './live'
 
 describe('nominatimUrl', () => {
   it('kodiert die Suchanfrage', () => {
@@ -67,5 +67,23 @@ describe('parseOverpassHotels', () => {
 
   it('kommt mit leeren Antworten zurecht', () => {
     expect(parseOverpassHotels({}, 0, 0)).toEqual([])
+  })
+})
+
+describe('filterByStars', () => {
+  const hotels = [
+    { id: 'a', name: 'A', stars: 5, lat: 0, lon: 0, distanceKm: 0, website: null, address: null },
+    { id: 'b', name: 'B', stars: 3, lat: 0, lon: 0, distanceKm: 0, website: null, address: null },
+    { id: 'c', name: 'C', stars: null, lat: 0, lon: 0, distanceKm: 0, website: null, address: null },
+  ]
+
+  it('lässt ohne Mindest-Sterne alles durch', () => {
+    expect(filterByStars(hotels, 0, false)).toHaveLength(3)
+  })
+
+  it('filtert nach Mindest-Sternen, Hotels ohne Angabe optional', () => {
+    expect(filterByStars(hotels, 4, false).map((h) => h.id)).toEqual(['a'])
+    expect(filterByStars(hotels, 4, true).map((h) => h.id)).toEqual(['a', 'c'])
+    expect(filterByStars(hotels, 3, false).map((h) => h.id)).toEqual(['a', 'b'])
   })
 })

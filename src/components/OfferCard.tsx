@@ -1,7 +1,7 @@
 import type { Offer, TravelType, TripParams } from '../types'
 import { airportLabel } from '../data/airports'
 import { formatBeachDistance, formatFlightHours, formatPrice, ratingWord } from '../lib/format'
-import { perPersonPrice, totalPrice, travellersLabel } from '../lib/trip'
+import { perPersonPrice, priceBreakdown, travellersLabel } from '../lib/trip'
 import { Badge, ScoreBar, Stars } from './ui'
 import { OfferPhoto } from './OfferPhoto'
 
@@ -97,15 +97,26 @@ export function OfferCard({
                     )}
                   </p>
                 )}
-                <p className="text-xs text-slate-500">
-                  gesamt ab {formatPrice(totalPrice(offer, trip, travelType))}
-                  <span className="text-slate-400">
-                    {' '}
-                    · {travellersLabel(trip)}
-                    {travelType !== 'flight' && <> · {trip.nights} Nächte</>}
-                    {flightIncluded && (trip.baggage ? ' · inkl. Flug & Gepäck' : ' · inkl. Flug (Handgepäck)')}
-                  </span>
-                </p>
+                {(() => {
+                  const breakdown = priceBreakdown(offer, trip, travelType)
+                  const parts = [
+                    breakdown.hotel > 0 && `Hotel ${formatPrice(breakdown.hotel)}`,
+                    breakdown.flight > 0 && `Flug ${formatPrice(breakdown.flight)}`,
+                    breakdown.baggage > 0 && `Gepäck ${formatPrice(breakdown.baggage)}`,
+                  ].filter(Boolean)
+                  return (
+                    <p className="text-xs text-slate-500">
+                      gesamt ab {formatPrice(breakdown.total)}
+                      {parts.length > 1 && (
+                        <span className="text-slate-400"> ({parts.join(' + ')})</span>
+                      )}
+                      <span className="block text-slate-400">
+                        {travellersLabel(trip)}
+                        {travelType !== 'flight' && <> · {trip.nights} Nächte</>}
+                      </span>
+                    </p>
+                  )
+                })()}
               </div>
               <button
                 type="button"

@@ -91,16 +91,22 @@ export type SortKey = 'recommended' | 'priceAsc' | 'priceDesc' | 'rating' | 'sta
 /** Flexibilität des Reisedatums („ungefähr“). */
 export type Flexibility = 'exact' | 'plus3' | 'plus7'
 
-/** Reisedaten der Suche: Zeitraum, Reisende, Gepäck. */
+/** Belegung eines Zimmers. */
+export interface RoomOccupancy {
+  adults: number
+  /** Alter der Kinder in diesem Zimmer (0–17) */
+  childAges: number[]
+}
+
+/** Reisedaten der Suche: Zeitraum, Zimmer mit Reisenden, Gepäck. */
 export interface TripParams {
   /** Abreisedatum (ISO yyyy-mm-dd), null = noch offen */
   departureDate: string | null
   flexibility: Flexibility
   /** Reisedauer in Nächten */
   nights: number
-  adults: number
-  /** Alter der mitreisenden Kinder (0–17) */
-  childAges: number[]
+  /** Zimmer mit Aufteilung der Reisenden */
+  rooms: RoomOccupancy[]
   /** Flug mit Aufgabegepäck? */
   baggage: boolean
 }

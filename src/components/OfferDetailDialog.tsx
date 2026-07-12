@@ -6,7 +6,7 @@ import { photoPageUrl } from '../lib/images'
 import { bookingUrl, flightsUrl, mapsUrl } from '../lib/links'
 import { OfferPhoto } from './OfferPhoto'
 import { formatBeachDistance, formatFlightHours, formatPrice, ratingWord } from '../lib/format'
-import { totalPrice, tripSummary } from '../lib/trip'
+import { priceBreakdown, tripSummary } from '../lib/trip'
 import { Badge, ScoreBar, Stars } from './ui'
 
 function Fact({ label, value }: { label: string; value: string }) {
@@ -103,15 +103,42 @@ export function OfferDetailDialog({
               />
             </dl>
 
-            <div className="rounded-lg bg-sky-50 px-3 py-2 text-sm text-sky-900">
-              <span className="font-semibold">
-                Gesamt ab {formatPrice(totalPrice(offer, trip, travelType))}
-              </span>{' '}
-              <span className="text-sky-700">
-                – {tripSummary(trip, travelType !== 'hotel' && offer.destinationAirport !== null)}
-                {travelType !== 'hotel' && offer.flightPricePerPerson !== null && ' · inkl. Flug'}
-              </span>
-            </div>
+            {(() => {
+              const breakdown = priceBreakdown(offer, trip, travelType)
+              return (
+                <div className="rounded-lg bg-sky-50 px-3 py-2.5 text-sm text-sky-900">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="font-semibold">Gesamt ab {formatPrice(breakdown.total)}</span>
+                    <span className="text-xs text-sky-700">
+                      {tripSummary(trip, travelType !== 'hotel' && offer.destinationAirport !== null)}
+                    </span>
+                  </div>
+                  <dl className="mt-1.5 space-y-0.5 border-t border-sky-100 pt-1.5 text-xs text-sky-800">
+                    {breakdown.hotel > 0 && (
+                      <div className="flex justify-between">
+                        <dt>
+                          🏨 Hotel ({trip.nights} Nächte, {trip.rooms.length}{' '}
+                          {trip.rooms.length === 1 ? 'Zimmer' : 'Zimmer'})
+                        </dt>
+                        <dd className="font-medium">{formatPrice(breakdown.hotel)}</dd>
+                      </div>
+                    )}
+                    {breakdown.flight > 0 && (
+                      <div className="flex justify-between">
+                        <dt>✈️ Flug (hin & zurück{offer.livePrice ? ', live' : ''})</dt>
+                        <dd className="font-medium">{formatPrice(breakdown.flight)}</dd>
+                      </div>
+                    )}
+                    {breakdown.baggage > 0 && (
+                      <div className="flex justify-between">
+                        <dt>🧳 Aufgabegepäck</dt>
+                        <dd className="font-medium">{formatPrice(breakdown.baggage)}</dd>
+                      </div>
+                    )}
+                  </dl>
+                </div>
+              )
+            })()}
 
             <div className="flex flex-wrap gap-1.5">
               {offer.familyHotel && <Badge tone="green">👨‍👩‍👧‍👦 Familienhotel</Badge>}

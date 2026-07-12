@@ -44,6 +44,23 @@ export function haversineKm(lat1: number, lon1: number, lat2: number, lon2: numb
   return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 }
 
+/**
+ * Hotelkategorie-Filter für Live-Ergebnisse. OpenStreetMap kennt für viele
+ * Hotels keine Sterne – solche Einträge werden über includeUnrated gesteuert.
+ */
+export function filterByStars(
+  hotels: LiveHotel[],
+  minStars: number,
+  includeUnrated: boolean,
+): LiveHotel[] {
+  if (minStars <= 0) return hotels
+  return hotels.filter(
+    (hotel) =>
+      (hotel.stars !== null && hotel.stars >= minStars) ||
+      (includeUnrated && hotel.stars === null),
+  )
+}
+
 interface OverpassElement {
   type: string
   id: number

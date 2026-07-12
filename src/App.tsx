@@ -109,7 +109,12 @@ export default function App() {
 
         {view === 'live' && (
           <div className="mt-4">
-            <LiveSearch trip={effectiveTrip} preferredAirport={filters.airports[0]} />
+            <LiveSearch
+              trip={effectiveTrip}
+              minStars={filters.minStars}
+              onMinStarsChange={(minStars) => setFilters({ ...filters, minStars })}
+              preferredAirport={filters.airports[0]}
+            />
           </div>
         )}
 

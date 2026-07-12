@@ -4,6 +4,7 @@ import { airportLabel } from '../data/airports'
 import { bookingSearchUrl, flightsSearchUrl } from '../lib/links'
 import {
   OVERPASS_URL,
+  filterByStars,
   nominatimUrl,
   overpassQuery,
   parseOverpassHotels,
@@ -27,9 +28,13 @@ function StarsInline({ stars }: { stars: number }) {
 
 export function LiveSearch({
   trip,
+  minStars,
+  onMinStarsChange,
   preferredAirport,
 }: {
   trip: TripParams
+  minStars: number
+  onMinStarsChange: (stars: number) => void
   preferredAirport?: string
 }) {
   const [query, setQuery] = useState('')
@@ -38,7 +43,10 @@ export function LiveSearch({
   const [error, setError] = useState('')
   const [place, setPlace] = useState<LivePlace | null>(null)
   const [hotels, setHotels] = useState<LiveHotel[]>([])
+  const [includeUnrated, setIncludeUnrated] = useState(false)
   const abortRef = useRef<AbortController | null>(null)
+
+  const filteredHotels = filterByStars(hotels, minStars, includeUnrated)
 
   const search = async () => {
     if (!query.trim()) return
@@ -148,9 +156,46 @@ export function LiveSearch({
 
       {status === 'done' && place && (
         <div className="mt-5">
+          <div className="mb-3 flex flex-wrap items-center gap-2 rounded-xl bg-slate-50 px-3 py-2">
+            <span className="text-xs font-semibold text-slate-500">Hotelkategorie:</span>
+            <div className="flex gap-1" role="radiogroup" aria-label="Mindest-Sterne (Live-Suche)">
+              {[0, 3, 4, 5].map((stars) => (
+                <button
+                  key={stars}
+                  type="button"
+                  role="radio"
+                  aria-checked={minStars === stars}
+                  onClick={() => onMinStarsChange(stars)}
+                  className={`rounded-lg border px-2.5 py-1 text-xs font-medium transition ${
+                    minStars === stars
+                      ? 'border-sky-600 bg-sky-50 text-sky-700'
+                      : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+                  }`}
+                >
+                  {stars === 0 ? 'Alle' : `${stars}★+`}
+                </button>
+              ))}
+            </div>
+            {minStars > 0 && (
+              <label className="flex cursor-pointer items-center gap-1.5 text-xs text-slate-600">
+                <input
+                  type="checkbox"
+                  checked={includeUnrated}
+                  onChange={(e) => setIncludeUnrated(e.target.checked)}
+                  className="size-3.5 rounded border-slate-300 accent-sky-600"
+                />
+                Hotels ohne Sterne-Angabe einbeziehen
+              </label>
+            )}
+            <span className="ml-auto text-[11px] text-slate-400">
+              Weitere Kriterien (Bewertung, Pool …) sind in OpenStreetMap nicht erfasst
+            </span>
+          </div>
+
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h3 className="text-sm font-medium text-slate-600">
-              <strong className="text-lg font-bold text-slate-900">{hotels.length}</strong> Hotels
+              <strong className="text-lg font-bold text-slate-900">{filteredHotels.length}</strong>
+              {minStars > 0 && <span className="text-slate-400"> von {hotels.length}</span>} Hotels
               bei {place.name} <span className="text-slate-400">(Quelle: OpenStreetMap)</span>
             </h3>
             <a
@@ -163,15 +208,16 @@ export function LiveSearch({
             </a>
           </div>
 
-          {hotels.length === 0 ? (
+          {filteredHotels.length === 0 ? (
             <p className="mt-4 text-sm text-slate-500">
-              In diesem Umkreis sind keine Hotels in OpenStreetMap erfasst – Radius vergrößern oder
-              anderen Ort probieren.
+              {hotels.length === 0
+                ? 'In diesem Umkreis sind keine Hotels in OpenStreetMap erfasst – Radius vergrößern oder anderen Ort probieren.'
+                : 'Kein Hotel erfüllt den Sterne-Filter – Kategorie lockern oder Hotels ohne Sterne-Angabe einbeziehen.'}
             </p>
           ) : (
             <>
               <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-                {hotels.slice(0, MAX_SHOWN).map((hotel) => (
+                {filteredHotels.slice(0, MAX_SHOWN).map((hotel) => (
                   <li
                     key={hotel.id}
                     className="flex flex-col gap-1.5 rounded-xl border border-slate-100 bg-slate-50/60 p-3"
@@ -218,10 +264,10 @@ export function LiveSearch({
                   </li>
                 ))}
               </ul>
-              {hotels.length > MAX_SHOWN && (
+              {filteredHotels.length > MAX_SHOWN && (
                 <p className="mt-3 text-center text-xs text-slate-400">
-                  … und {hotels.length - MAX_SHOWN} weitere. Verkleinere den Radius, um gezielter zu
-                  suchen.
+                  … und {filteredHotels.length - MAX_SHOWN} weitere. Verkleinere den Radius, um
+                  gezielter zu suchen.
                 </p>
               )}
             </>

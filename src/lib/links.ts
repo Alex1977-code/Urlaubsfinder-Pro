@@ -1,5 +1,5 @@
 import type { Offer, TripParams } from '../types'
-import { returnDate } from './trip'
+import { allChildAges, returnDate, totalAdults } from './trip'
 
 /**
  * Externe Links zu echten, aktuellen Angeboten. Die Demo-Daten nennen echte
@@ -13,8 +13,9 @@ function tripQueryParams(trip?: TripParams): string {
   if (trip.departureDate) {
     params += `&checkin=${trip.departureDate}&checkout=${returnDate(trip)}`
   }
-  params += `&group_adults=${trip.adults}&no_rooms=1&group_children=${trip.childAges.length}`
-  for (const age of trip.childAges) {
+  const childAges = allChildAges(trip)
+  params += `&group_adults=${totalAdults(trip)}&no_rooms=${trip.rooms.length}&group_children=${childAges.length}`
+  for (const age of childAges) {
     params += `&age=${age}`
   }
   return params
