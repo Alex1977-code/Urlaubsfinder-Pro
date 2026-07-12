@@ -1,0 +1,71 @@
+import { describe, expect, it } from 'vitest'
+import { haversineKm, nominatimUrl, overpassQuery, parseOverpassHotels } from './live'
+
+describe('nominatimUrl', () => {
+  it('kodiert die Suchanfrage', () => {
+    expect(nominatimUrl('Playa de Palma, Mallorca')).toContain(
+      'q=Playa%20de%20Palma%2C%20Mallorca',
+    )
+  })
+})
+
+describe('overpassQuery', () => {
+  it('fragt alle Hotel-Objekte im Umkreis ab', () => {
+    const query = overpassQuery(39.5, 2.75, 10000)
+    expect(query).toContain('nwr["tourism"="hotel"]')
+    expect(query).toContain('around:10000,39.5,2.75')
+    expect(query).toContain('out center tags')
+  })
+})
+
+describe('haversineKm', () => {
+  it('berechnet plausible Entfernungen', () => {
+    // Frankfurt -> München: ca. 300 km Luftlinie
+    const km = haversineKm(50.11, 8.68, 48.14, 11.58)
+    expect(km).toBeGreaterThan(290)
+    expect(km).toBeLessThan(320)
+    expect(haversineKm(39.5, 2.75, 39.5, 2.75)).toBe(0)
+  })
+})
+
+describe('parseOverpassHotels', () => {
+  const json: Parameters<typeof parseOverpassHotels>[0] = {
+    elements: [
+      {
+        type: 'node',
+        id: 1,
+        lat: 39.51,
+        lon: 2.76,
+        tags: {
+          name: 'Hotel Playa',
+          stars: '4',
+          'addr:street': 'Carrer del Mar',
+          'addr:housenumber': '5',
+          'addr:city': 'Palma',
+          website: 'https://hotel-playa.example',
+        },
+      },
+      // Way mit center statt lat/lon
+      { type: 'way', id: 2, center: { lat: 39.52, lon: 2.77 }, tags: { name: 'Hotel Sol' } },
+      // Ohne Namen: wird übersprungen
+      { type: 'node', id: 3, lat: 39.5, lon: 2.75, tags: { stars: '3' } },
+      // Ungültige Sterne: null
+      { type: 'node', id: 4, lat: 39.505, lon: 2.755, tags: { name: 'Pension Mar', stars: 'x' } },
+    ],
+  }
+
+  it('extrahiert Hotels, sortiert nach Entfernung und überspringt namenlose Einträge', () => {
+    const hotels = parseOverpassHotels(json, 39.5, 2.75)
+    expect(hotels.map((h) => h.name)).toEqual(['Pension Mar', 'Hotel Playa', 'Hotel Sol'])
+    const playa = hotels.find((h) => h.name === 'Hotel Playa')!
+    expect(playa.stars).toBe(4)
+    expect(playa.address).toBe('Carrer del Mar 5, Palma')
+    expect(playa.website).toBe('https://hotel-playa.example')
+    expect(hotels.find((h) => h.name === 'Pension Mar')!.stars).toBeNull()
+    expect(hotels[0].distanceKm).toBeLessThan(hotels[2].distanceKm)
+  })
+
+  it('kommt mit leeren Antworten zurecht', () => {
+    expect(parseOverpassHotels({}, 0, 0)).toEqual([])
+  })
+})

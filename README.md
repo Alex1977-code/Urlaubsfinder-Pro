@@ -38,6 +38,8 @@ Die Seite wird bei jedem Push automatisch per GitHub Actions gebaut und auf GitH
 
 **Weitere Funktionen:** Volltextsuche (Ziel, Region, Hotelname – optional, ohne Eingabe werden alle Angebote gezeigt), Sortierung (Empfehlung, Preis, Bewertung, Kategorie), aktive Filter zählen & zurücksetzen, responsives Design (Filter auf Mobilgeräten einklappbar), leerer Zustand mit Reset.
 
+**🌐 Live-Suche (alle Hotels):** Neben den 40 kuratierten Angeboten fragt die Live-Suche in Echtzeit **alle in OpenStreetMap erfassten Hotels** eines beliebigen Ziels weltweit ab (Geokodierung über Nominatim, Hotels über die Overpass-API – schlüssellos und kostenlos). Jedes gefundene Hotel verlinkt auf aktuelle Preise bei Booking.com (mit Reisedaten) sowie Karte und Website; dazu ein Google-Flights-Link für Flugangebote zum gesuchten Ziel.
+
 **Detailansicht mit echten Angeboten:** „Zum Angebot“ öffnet eine Detailansicht mit allen Kriterien und Links zu tagesaktuellen, buchbaren Angeboten – Hotelpreise auf Booking.com, Flugsuche über Google Flights (berücksichtigt den gewählten Abflughafen) und Lage auf Google Maps. Die Hotels in den Beispieldaten sind echte Hotels.
 
 ## Tech-Stack
@@ -69,6 +71,8 @@ src/
 │   ├── filter.ts         # Filter-Engine, Sortierung, Empfehlungs-Score
 │   ├── trip.ts           # Reisedaten: Dauer, Reisende, Gepäck, Gesamtpreis
 │   ├── links.ts          # Links zu echten Angeboten (Booking.com, Google Flights)
+│   ├── live.ts           # Live-Hotelsuche (Nominatim + Overpass/OpenStreetMap)
+│   ├── images.ts         # Hotelfotos von Wikimedia Commons
 │   ├── format.ts         # Formatierung (Preis, Flugzeit, Strandentfernung)
 │   └── *.test.ts         # Unit-Tests
 ├── components/

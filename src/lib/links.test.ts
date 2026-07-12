@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { bookingUrl, flightsUrl, mapsUrl } from './links'
+import { bookingSearchUrl, bookingUrl, flightsSearchUrl, flightsUrl, mapsUrl } from './links'
 import { DEFAULT_TRIP } from './trip'
 import { OFFERS } from '../data/offers'
 
@@ -55,6 +55,19 @@ describe('flightsUrl', () => {
   it('übergibt Hin- und Rückflugdatum aus den Reisedaten', () => {
     const url = flightsUrl(offer, 'FRA', trip)
     expect(decodeURIComponent(url!)).toContain('on 2026-08-15 through 2026-08-22')
+  })
+})
+
+describe('generische Suchlinks (Live-Suche)', () => {
+  it('bookingSearchUrl nimmt beliebige Suchbegriffe samt Reisedaten', () => {
+    const url = bookingSearchUrl('Hotel Sol, Alcúdia', trip)
+    expect(url).toContain(encodeURIComponent('Hotel Sol, Alcúdia'))
+    expect(url).toContain('checkin=2026-08-15')
+  })
+
+  it('flightsSearchUrl funktioniert mit Ortsnamen', () => {
+    const url = flightsSearchUrl('Punta Cana', 'MUC', trip)
+    expect(decodeURIComponent(url)).toContain('from MUC to Punta Cana on 2026-08-15')
   })
 })
 

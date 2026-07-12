@@ -7,6 +7,7 @@ import { SearchBar } from './components/SearchBar'
 import { FilterSidebar } from './components/FilterSidebar'
 import { OfferCard } from './components/OfferCard'
 import { OfferDetailDialog } from './components/OfferDetailDialog'
+import { LiveSearch } from './components/LiveSearch'
 
 const SORT_OPTIONS: { value: SortKey; label: string }[] = [
   { value: 'recommended', label: 'Unsere Empfehlung' },
@@ -22,6 +23,7 @@ export default function App() {
   const [sort, setSort] = useState<SortKey>('recommended')
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null)
+  const [view, setView] = useState<'catalog' | 'live'>('catalog')
   const resultsRef = useRef<HTMLElement>(null)
 
   const results = useMemo(() => applyFilters(OFFERS, filters, sort), [filters, sort])
@@ -69,7 +71,42 @@ export default function App() {
           onSearch={handleSearch}
         />
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[300px_1fr]">
+        <div
+          role="tablist"
+          aria-label="Suchmodus"
+          className="mt-6 flex flex-wrap gap-1.5"
+        >
+          <button
+            type="button"
+            role="tab"
+            aria-selected={view === 'catalog'}
+            onClick={() => setView('catalog')}
+            className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+              view === 'catalog' ? 'bg-slate-900 text-white shadow' : 'bg-white text-slate-600 shadow-sm hover:bg-slate-50'
+            }`}
+          >
+            ⭐ Empfohlene Angebote ({OFFERS.length})
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={view === 'live'}
+            onClick={() => setView('live')}
+            className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+              view === 'live' ? 'bg-slate-900 text-white shadow' : 'bg-white text-slate-600 shadow-sm hover:bg-slate-50'
+            }`}
+          >
+            🌐 Live-Suche: alle Hotels
+          </button>
+        </div>
+
+        {view === 'live' && (
+          <div className="mt-4">
+            <LiveSearch trip={effectiveTrip} preferredAirport={filters.airports[0]} />
+          </div>
+        )}
+
+        <div className={`mt-4 grid gap-6 lg:grid-cols-[300px_1fr] ${view === 'live' ? 'hidden' : ''}`}>
           {/* Filter: auf Mobilgeräten einklappbar */}
           <aside>
             <button
