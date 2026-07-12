@@ -1,9 +1,18 @@
-import type { Offer } from '../types'
+import type { Offer, TripParams } from '../types'
 import { airportLabel } from '../data/airports'
 import { formatBeachDistance, formatFlightHours, formatPrice, ratingWord } from '../lib/format'
+import { totalPrice, travellersLabel } from '../lib/trip'
 import { Badge, ScoreBar, Stars } from './ui'
 
-export function OfferCard({ offer, onSelect }: { offer: Offer; onSelect: (offer: Offer) => void }) {
+export function OfferCard({
+  offer,
+  trip,
+  onSelect,
+}: {
+  offer: Offer
+  trip: TripParams
+  onSelect: (offer: Offer) => void
+}) {
   return (
     <article className="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-900/5 transition hover:shadow-lg">
       <div className="flex flex-col sm:flex-row">
@@ -77,6 +86,13 @@ export function OfferCard({ offer, onSelect }: { offer: Offer; onSelect: (offer:
               <div className="text-right">
                 <p className="text-xs text-slate-400">p. P. ab</p>
                 <p className="text-2xl font-extrabold text-slate-900">{formatPrice(offer.pricePerPerson)}</p>
+                <p className="text-xs text-slate-500">
+                  gesamt ab {formatPrice(totalPrice(offer, trip))}
+                  <span className="text-slate-400">
+                    {' '}
+                    · {travellersLabel(trip)} · {trip.nights} Nächte
+                  </span>
+                </p>
               </div>
               <button
                 type="button"

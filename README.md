@@ -10,6 +10,8 @@ Die Seite wird bei jedem Push automatisch per GitHub Actions gebaut und auf GitH
 
 **Reiseart:** Pauschalreise · Nur Hotel · Nur Flug
 
+**Reisedaten:** Reisedatum mit „ungefähr“-Flexibilität (genau, ± 3 Tage, ± 1 Woche) · Dauer (4 Nächte bis 3 Wochen) · Reisende (Erwachsene + Kinder mit Altersangabe; unter 2 J. frei, 2–11 J. 70 %) · Flug mit Aufgabegepäck oder nur Handgepäck. Alle Angaben fließen in den Gesamtpreis und in die Buchungslinks ein (Booking.com erhält Check-in/Check-out und Reisende, Google Flights die Flugdaten).
+
 **Suchkriterien & Filter:**
 
 | Kriterium | Umsetzung |
@@ -65,6 +67,7 @@ src/
 │   └── airports.ts       # Wählbare Abflughäfen
 ├── lib/
 │   ├── filter.ts         # Filter-Engine, Sortierung, Empfehlungs-Score
+│   ├── trip.ts           # Reisedaten: Dauer, Reisende, Gepäck, Gesamtpreis
 │   ├── links.ts          # Links zu echten Angeboten (Booking.com, Google Flights)
 │   ├── format.ts         # Formatierung (Preis, Flugzeit, Strandentfernung)
 │   └── *.test.ts         # Unit-Tests

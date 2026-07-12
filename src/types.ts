@@ -81,3 +81,20 @@ export interface Filters {
 }
 
 export type SortKey = 'recommended' | 'priceAsc' | 'priceDesc' | 'rating' | 'stars'
+
+/** Flexibilität des Reisedatums („ungefähr“). */
+export type Flexibility = 'exact' | 'plus3' | 'plus7'
+
+/** Reisedaten der Suche: Zeitraum, Reisende, Gepäck. */
+export interface TripParams {
+  /** Abreisedatum (ISO yyyy-mm-dd), null = noch offen */
+  departureDate: string | null
+  flexibility: Flexibility
+  /** Reisedauer in Nächten */
+  nights: number
+  adults: number
+  /** Alter der mitreisenden Kinder (0–17) */
+  childAges: number[]
+  /** Flug mit Aufgabegepäck? */
+  baggage: boolean
+}

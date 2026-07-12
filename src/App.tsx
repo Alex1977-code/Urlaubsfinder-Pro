@@ -1,7 +1,8 @@
 import { useMemo, useRef, useState } from 'react'
-import type { Filters, Offer, SortKey } from './types'
+import type { Filters, Offer, SortKey, TripParams } from './types'
 import { OFFERS } from './data/offers'
 import { DEFAULT_FILTERS, applyFilters } from './lib/filter'
+import { DEFAULT_TRIP, tripSummary } from './lib/trip'
 import { SearchBar } from './components/SearchBar'
 import { FilterSidebar } from './components/FilterSidebar'
 import { OfferCard } from './components/OfferCard'
@@ -17,12 +18,16 @@ const SORT_OPTIONS: { value: SortKey; label: string }[] = [
 
 export default function App() {
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS)
+  const [trip, setTrip] = useState<TripParams>(DEFAULT_TRIP)
   const [sort, setSort] = useState<SortKey>('recommended')
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null)
   const resultsRef = useRef<HTMLElement>(null)
 
   const results = useMemo(() => applyFilters(OFFERS, filters, sort), [filters, sort])
+
+  // Bei "Nur Hotel" spielt Gepäck keine Rolle – nicht in Preis und Anzeige aufnehmen.
+  const effectiveTrip = filters.travelType === 'hotel' ? { ...trip, baggage: false } : trip
 
   // "Suchen" springt zur Ergebnisliste – auch ohne eingegebenes Reiseziel.
   const handleSearch = () => {
@@ -59,6 +64,8 @@ export default function App() {
           onTravelTypeChange={(travelType) => setFilters({ ...filters, travelType })}
           query={filters.query}
           onQueryChange={(query) => setFilters({ ...filters, query })}
+          trip={trip}
+          onTripChange={setTrip}
           onSearch={handleSearch}
         />
 
@@ -83,6 +90,9 @@ export default function App() {
               <h2 className="text-sm font-medium text-slate-600">
                 <strong className="text-lg font-bold text-slate-900">{results.length}</strong>{' '}
                 {results.length === 1 ? 'Angebot' : 'Angebote'} gefunden
+                <span className="block text-xs font-normal text-slate-400">
+                  {tripSummary(effectiveTrip, filters.travelType !== 'hotel')}
+                </span>
               </h2>
               <label className="flex items-center gap-2 text-sm text-slate-600">
                 Sortieren:
@@ -103,7 +113,7 @@ export default function App() {
             {results.length > 0 ? (
               <div className="flex flex-col gap-4">
                 {results.map((offer) => (
-                  <OfferCard key={offer.id} offer={offer} onSelect={setSelectedOffer} />
+                  <OfferCard key={offer.id} offer={offer} trip={effectiveTrip} onSelect={setSelectedOffer} />
                 ))}
               </div>
             ) : (
@@ -130,6 +140,7 @@ export default function App() {
 
       <OfferDetailDialog
         offer={selectedOffer}
+        trip={effectiveTrip}
         preferredAirport={filters.airports[0]}
         onClose={() => setSelectedOffer(null)}
       />

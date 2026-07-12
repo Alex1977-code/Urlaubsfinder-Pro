@@ -1,9 +1,10 @@
 import { useEffect, useRef } from 'react'
-import type { Offer } from '../types'
+import type { Offer, TripParams } from '../types'
 import { airportLabel } from '../data/airports'
 import { SCORE_KEYS, SCORE_LABELS } from '../lib/filter'
 import { bookingUrl, flightsUrl, mapsUrl } from '../lib/links'
 import { formatBeachDistance, formatFlightHours, formatPrice, ratingWord } from '../lib/format'
+import { totalPrice, tripSummary } from '../lib/trip'
 import { Badge, ScoreBar, Stars } from './ui'
 
 function Fact({ label, value }: { label: string; value: string }) {
@@ -17,10 +18,12 @@ function Fact({ label, value }: { label: string; value: string }) {
 
 export function OfferDetailDialog({
   offer,
+  trip,
   preferredAirport,
   onClose,
 }: {
   offer: Offer | null
+  trip: TripParams
   preferredAirport?: string
   onClose: () => void
 }) {
@@ -33,7 +36,7 @@ export function OfferDetailDialog({
     if (!offer && dialog.open) dialog.close()
   }, [offer])
 
-  const flights = offer ? flightsUrl(offer, preferredAirport) : null
+  const flights = offer ? flightsUrl(offer, preferredAirport, trip) : null
 
   return (
     <dialog
@@ -93,6 +96,15 @@ export function OfferDetailDialog({
               <Fact label="Preis p. P." value={`ab ${formatPrice(offer.pricePerPerson)}`} />
             </dl>
 
+            <div className="rounded-lg bg-sky-50 px-3 py-2 text-sm text-sky-900">
+              <span className="font-semibold">
+                Gesamt ab {formatPrice(totalPrice(offer, trip))}
+              </span>{' '}
+              <span className="text-sky-700">
+                – {tripSummary(trip, offer.destinationAirport !== null)}
+              </span>
+            </div>
+
             <div className="flex flex-wrap gap-1.5">
               {offer.familyHotel && <Badge tone="green">👨‍👩‍👧‍👦 Familienhotel</Badge>}
               {offer.amenities.pool && <Badge>🏊 Pool</Badge>}
@@ -120,7 +132,7 @@ export function OfferDetailDialog({
 
             <div className="flex flex-col gap-2 border-t border-slate-100 pt-4">
               <a
-                href={bookingUrl(offer)}
+                href={bookingUrl(offer, trip)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-xl bg-sky-600 px-5 py-3 text-center text-sm font-semibold text-white shadow transition hover:bg-sky-700"
