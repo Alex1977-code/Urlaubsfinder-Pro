@@ -26,7 +26,30 @@ export function nominatimUrl(query: string): string {
   return `https://nominatim.openstreetmap.org/search?format=json&limit=1&accept-language=de&q=${encodeURIComponent(query)}`
 }
 
-export const OVERPASS_URL = 'https://overpass-api.de/api/interpreter'
+/** Öffentliche Overpass-Server; bei Überlastung wird der nächste probiert. */
+export const OVERPASS_URLS = [
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
+]
+
+/**
+ * Grobe Flugzeit-Schätzung: Luftlinie bei ~800 km/h Reisegeschwindigkeit
+ * plus pauschal 30 Minuten für Start und Landung.
+ */
+export function estimatedFlightHours(distanceKm: number): number {
+  return Math.round((0.5 + distanceKm / 800) * 10) / 10
+}
+
+/** Verständliche Meldung für typische Overpass-Fehler. */
+export function friendlyOverpassError(detail: string): string {
+  if (detail.includes('429')) {
+    return 'Der OpenStreetMap-Server ist gerade ausgelastet (zu viele Anfragen kurz hintereinander). Bitte einen Moment warten und erneut suchen.'
+  }
+  if (detail.includes('504') || detail.toLowerCase().includes('timeout')) {
+    return 'Die Hotelabfrage hat zu lange gedauert – bitte den Umkreis verkleinern oder erneut versuchen.'
+  }
+  return `Hotelabfrage fehlgeschlagen (${detail}). Bitte später erneut versuchen.`
+}
 
 /** Overpass-QL: alle Hotels (Nodes, Ways, Relations) im Umkreis. */
 export function overpassQuery(lat: number, lon: number, radiusM: number): string {

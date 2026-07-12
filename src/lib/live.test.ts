@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest'
-import { filterByStars, haversineKm, nominatimUrl, overpassQuery, parseOverpassHotels } from './live'
+import {
+  estimatedFlightHours,
+  filterByStars,
+  friendlyOverpassError,
+  haversineKm,
+  nominatimUrl,
+  overpassQuery,
+  parseOverpassHotels,
+} from './live'
+import { AIRPORTS } from '../data/airports'
 
 describe('nominatimUrl', () => {
   it('kodiert die Suchanfrage', () => {
@@ -85,5 +94,27 @@ describe('filterByStars', () => {
     expect(filterByStars(hotels, 4, false).map((h) => h.id)).toEqual(['a'])
     expect(filterByStars(hotels, 4, true).map((h) => h.id)).toEqual(['a', 'c'])
     expect(filterByStars(hotels, 3, false).map((h) => h.id)).toEqual(['a', 'b'])
+  })
+})
+
+describe('estimatedFlightHours', () => {
+  it('liefert plausible Flugzeiten (FRA -> Mallorca ca. 2 Std.)', () => {
+    const fra = AIRPORTS.find((a) => a.code === 'FRA')!
+    const hours = estimatedFlightHours(haversineKm(fra.lat, fra.lon, 39.55, 2.74))
+    expect(hours).toBeGreaterThan(1.7)
+    expect(hours).toBeLessThan(2.5)
+  })
+
+  it('enthält den Pauschalaufschlag für Start und Landung', () => {
+    expect(estimatedFlightHours(0)).toBe(0.5)
+    expect(estimatedFlightHours(800)).toBe(1.5)
+  })
+})
+
+describe('friendlyOverpassError', () => {
+  it('erklärt Rate-Limit und Timeout verständlich', () => {
+    expect(friendlyOverpassError('HTTP 429')).toContain('ausgelastet')
+    expect(friendlyOverpassError('HTTP 504')).toContain('Umkreis verkleinern')
+    expect(friendlyOverpassError('HTTP 500')).toContain('HTTP 500')
   })
 })

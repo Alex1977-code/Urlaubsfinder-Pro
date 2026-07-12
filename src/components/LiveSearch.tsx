@@ -1,10 +1,14 @@
 import { useRef, useState } from 'react'
 import type { TripParams } from '../types'
-import { airportLabel } from '../data/airports'
+import { AIRPORTS, airportLabel } from '../data/airports'
+import { formatFlightHours } from '../lib/format'
 import { bookingSearchUrl, flightsSearchUrl } from '../lib/links'
 import {
-  OVERPASS_URL,
+  OVERPASS_URLS,
+  estimatedFlightHours,
   filterByStars,
+  friendlyOverpassError,
+  haversineKm,
   nominatimUrl,
   overpassQuery,
   parseOverpassHotels,
@@ -20,7 +24,7 @@ const RADIUS_OPTIONS = [
 
 const MAX_SHOWN = 60
 
-type Status = 'idle' | 'loading' | 'done' | 'error'
+type Status = 'idle' | 'loading' | 'done' | 'error' | 'blocked'
 
 function StarsInline({ stars }: { stars: number }) {
   return <span className="text-amber-400">{'★'.repeat(Math.round(stars))}</span>
@@ -29,11 +33,14 @@ function StarsInline({ stars }: { stars: number }) {
 export function LiveSearch({
   trip,
   minStars,
+  maxFlightHours,
   onMinStarsChange,
   preferredAirport,
 }: {
   trip: TripParams
   minStars: number
+  /** Max. Flugzeit aus den Filtern, null = egal */
+  maxFlightHours: number | null
   onMinStarsChange: (stars: number) => void
   preferredAirport?: string
 }) {
@@ -43,12 +50,15 @@ export function LiveSearch({
   const [error, setError] = useState('')
   const [place, setPlace] = useState<LivePlace | null>(null)
   const [hotels, setHotels] = useState<LiveHotel[]>([])
+  const [flightHours, setFlightHours] = useState<number | null>(null)
   const [includeUnrated, setIncludeUnrated] = useState(false)
   const abortRef = useRef<AbortController | null>(null)
 
+  const from = preferredAirport ?? 'FRA'
+  const fromAirport = AIRPORTS.find((airport) => airport.code === from)
   const filteredHotels = filterByStars(hotels, minStars, includeUnrated)
 
-  const search = async () => {
+  const search = async (searchRadius: number = radius) => {
     if (!query.trim()) return
     abortRef.current?.abort()
     const controller = new AbortController()
@@ -74,16 +84,45 @@ export function LiveSearch({
       const placeName = geo[0].display_name.split(',').slice(0, 2).join(',')
       setPlace({ name: placeName, lat, lon })
 
-      // 2) Alle Hotels im Umkreis laden (Overpass/OpenStreetMap)
-      const overpassResponse = await fetch(OVERPASS_URL, {
-        method: 'POST',
-        body: `data=${encodeURIComponent(overpassQuery(lat, lon, radius))}`,
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        signal: controller.signal,
-      })
-      if (!overpassResponse.ok) throw new Error(`Hotelabfrage fehlgeschlagen (${overpassResponse.status})`)
-      const data = await overpassResponse.json()
-      setHotels(parseOverpassHotels(data, lat, lon))
+      // 2) Geschätzte Flugzeit ab Abflughafen gegen den Filter prüfen
+      const estimated = fromAirport
+        ? estimatedFlightHours(haversineKm(fromAirport.lat, fromAirport.lon, lat, lon))
+        : null
+      setFlightHours(estimated)
+      if (maxFlightHours !== null && estimated !== null && estimated > maxFlightHours) {
+        setHotels([])
+        setStatus('blocked')
+        return
+      }
+
+      // 3) Alle Hotels im Umkreis laden (Overpass/OpenStreetMap, mit Ausweich-Server)
+      let data: unknown = null
+      let lastDetail = ''
+      for (const url of OVERPASS_URLS) {
+        try {
+          const overpassResponse = await fetch(url, {
+            method: 'POST',
+            body: `data=${encodeURIComponent(overpassQuery(lat, lon, searchRadius))}`,
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            signal: controller.signal,
+          })
+          if (!overpassResponse.ok) {
+            lastDetail = `HTTP ${overpassResponse.status}`
+            continue
+          }
+          data = await overpassResponse.json()
+          break
+        } catch (err) {
+          if (controller.signal.aborted) return
+          lastDetail = err instanceof Error ? err.message : 'Netzwerkfehler'
+        }
+      }
+      if (data === null) {
+        setStatus('error')
+        setError(friendlyOverpassError(lastDetail))
+        return
+      }
+      setHotels(parseOverpassHotels(data as Parameters<typeof parseOverpassHotels>[0], lat, lon))
       setStatus('done')
     } catch (err) {
       if (controller.signal.aborted) return
@@ -95,8 +134,6 @@ export function LiveSearch({
       )
     }
   }
-
-  const from = preferredAirport ?? 'FRA'
   const destinationLabel = place ? place.name.split(',')[0] : query
 
   return (
@@ -125,7 +162,12 @@ export function LiveSearch({
         />
         <select
           value={radius}
-          onChange={(e) => setRadius(Number(e.target.value))}
+          onChange={(e) => {
+            const value = Number(e.target.value)
+            setRadius(value)
+            // Nach einer Suche lädt der neue Umkreis direkt neu
+            if (status !== 'idle') void search(value)
+          }}
           aria-label="Suchradius"
           className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-700 outline-none focus:border-sky-500"
         >
@@ -152,6 +194,18 @@ export function LiveSearch({
 
       {status === 'error' && (
         <p className="mt-4 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">⚠️ {error}</p>
+      )}
+
+      {status === 'blocked' && place && flightHours !== null && (
+        <div className="mt-4 rounded-lg bg-amber-50 px-3 py-2.5 text-sm text-amber-800">
+          ✈️ {place.name} liegt bei ca.{' '}
+          <strong>{flightHours.toLocaleString('de-DE')} Std. Flugzeit</strong> ab{' '}
+          {airportLabel(from)} – über deiner eingestellten max. Flugzeit von {maxFlightHours} Std.
+          <span className="mt-1 block text-xs text-amber-700">
+            Erhöhe den Flugzeit-Filter (unter „Empfohlene Angebote“ → Max. Flugzeit) oder wähle ein
+            näheres Ziel.
+          </span>
+        </div>
       )}
 
       {status === 'done' && place && (
@@ -187,8 +241,14 @@ export function LiveSearch({
                 Hotels ohne Sterne-Angabe einbeziehen
               </label>
             )}
+            {flightHours !== null && (
+              <span className="rounded-full bg-sky-100 px-2.5 py-1 text-xs font-medium text-sky-800">
+                ✈️ {formatFlightHours(flightHours)} ab {airportLabel(from)}
+                {maxFlightHours !== null && ` (Filter: max. ${maxFlightHours} Std. ✓)`}
+              </span>
+            )}
             <span className="ml-auto text-[11px] text-slate-400">
-              Weitere Kriterien (Bewertung, Pool …) sind in OpenStreetMap nicht erfasst
+              Bewertung, Pool usw. sind in OpenStreetMap nicht erfasst
             </span>
           </div>
 

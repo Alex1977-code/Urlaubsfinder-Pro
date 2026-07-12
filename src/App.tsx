@@ -112,6 +112,7 @@ export default function App() {
             <LiveSearch
               trip={effectiveTrip}
               minStars={filters.minStars}
+              maxFlightHours={filters.maxFlightHours}
               onMinStarsChange={(minStars) => setFilters({ ...filters, minStars })}
               preferredAirport={filters.airports[0]}
             />
