@@ -94,7 +94,7 @@ export function OfferDetailDialog({
               <Fact label="WC-Regel" value={offer.paperInToilet ? 'Papier in Toilette OK' : 'Papier in den Eimer'} />
               <Fact label="Hotel p. P./Woche" value={`ab ${formatPrice(offer.hotelPricePerPerson)}`} />
               <Fact
-                label="Flug p. P."
+                label={offer.livePrice ? 'Flug p. P. (live)' : 'Flug p. P.'}
                 value={
                   offer.flightPricePerPerson !== null
                     ? `ab ${formatPrice(offer.flightPricePerPerson)}`

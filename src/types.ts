@@ -24,6 +24,8 @@ export interface Offer {
   hotelPricePerPerson: number
   /** Flugpreis pro Person (hin & zurück), null = keine Fluganreise */
   flightPricePerPerson: number | null
+  /** true, wenn der Flugpreis live von der Preis-API stammt */
+  livePrice?: boolean
   /** Hotelkategorie 1–5 Sterne */
   hotelStars: number
   /** Gästebewertung 0–10 */

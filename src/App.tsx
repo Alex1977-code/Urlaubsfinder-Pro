@@ -1,7 +1,8 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Filters, Offer, SortKey, TripParams } from './types'
 import { OFFERS } from './data/offers'
 import { DEFAULT_FILTERS, applyFilters } from './lib/filter'
+import { EMPTY_LIVE_PRICES, applyLivePrices, fetchLivePrices } from './lib/livePrices'
 import { DEFAULT_TRIP, tripSummary } from './lib/trip'
 import { SearchBar } from './components/SearchBar'
 import { FilterSidebar } from './components/FilterSidebar'
@@ -24,9 +25,15 @@ export default function App() {
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null)
   const [view, setView] = useState<'catalog' | 'live'>('catalog')
+  const [livePrices, setLivePrices] = useState(EMPTY_LIVE_PRICES)
   const resultsRef = useRef<HTMLElement>(null)
 
-  const results = useMemo(() => applyFilters(OFFERS, filters, sort), [filters, sort])
+  useEffect(() => {
+    void fetchLivePrices().then(setLivePrices)
+  }, [])
+
+  const offers = useMemo(() => applyLivePrices(OFFERS, livePrices), [livePrices])
+  const results = useMemo(() => applyFilters(offers, filters, sort), [offers, filters, sort])
 
   // Bei "Nur Hotel" spielt Gepäck keine Rolle – nicht in Preis und Anzeige aufnehmen.
   const effectiveTrip = filters.travelType === 'hotel' ? { ...trip, baggage: false } : trip
@@ -129,6 +136,15 @@ export default function App() {
                 {results.length === 1 ? 'Angebot' : 'Angebote'} gefunden
                 <span className="block text-xs font-normal text-slate-400">
                   {tripSummary(effectiveTrip, filters.travelType !== 'hotel')}
+                  {livePrices.updatedAt && filters.travelType !== 'hotel' && (
+                    <>
+                      {' · '}
+                      <span className="text-emerald-600">
+                        ✈️ Flugpreise live (Aviasales), Stand{' '}
+                        {new Date(livePrices.updatedAt).toLocaleDateString('de-DE')}
+                      </span>
+                    </>
+                  )}
                 </span>
               </h2>
               <label className="flex items-center gap-2 text-sm text-slate-600">

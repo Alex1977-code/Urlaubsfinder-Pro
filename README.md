@@ -38,6 +38,8 @@ Die Seite wird bei jedem Push automatisch per GitHub Actions gebaut und auf GitH
 
 **Weitere Funktionen:** Volltextsuche (Ziel, Region, Hotelname – optional, ohne Eingabe werden alle Angebote gezeigt), Sortierung (Empfehlung, Preis, Bewertung, Kategorie), aktive Filter zählen & zurücksetzen, responsives Design (Filter auf Mobilgeräten einklappbar), leerer Zustand mit Reset.
 
+**✈️ Echte Flugpreise:** Ein täglicher GitHub-Actions-Lauf (04:23 UTC) holt über die Travelpayouts/Aviasales-Daten-API die günstigsten realen Flugpreise für alle Ziele (Repository-Secret `TRAVELPAYOUTS_TOKEN`, siehe `scripts/fetch-prices.mjs`) und legt sie als `live-prices.json` in den Build. Die App überblendet damit die Richtwerte und kennzeichnet sie mit einem LIVE-Badge; ohne Token/Daten bleiben die Richtwerte aktiv.
+
 **🌐 Live-Suche (alle Hotels):** Neben den 40 kuratierten Angeboten fragt die Live-Suche in Echtzeit **alle in OpenStreetMap erfassten Hotels** eines beliebigen Ziels weltweit ab (Geokodierung über Nominatim, Hotels über die Overpass-API – schlüssellos und kostenlos). Jedes gefundene Hotel verlinkt auf aktuelle Preise bei Booking.com (mit Reisedaten) sowie Karte und Website; dazu ein Google-Flights-Link für Flugangebote zum gesuchten Ziel.
 
 **Detailansicht mit echten Angeboten:** „Zum Angebot“ öffnet eine Detailansicht mit allen Kriterien und Links zu tagesaktuellen, buchbaren Angeboten – Hotelpreise auf Booking.com, Flugsuche über Google Flights (berücksichtigt den gewählten Abflughafen) und Lage auf Google Maps. Die Hotels in den Beispieldaten sind echte Hotels.

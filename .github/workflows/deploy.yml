@@ -3,6 +3,9 @@ name: Deploy zu GitHub Pages
 on:
   push:
     branches: [claude/vacation-search-app-yy24gw, main]
+  schedule:
+    # Täglich 04:23 UTC: echte Flugpreise aktualisieren und neu veröffentlichen
+    - cron: '23 4 * * *'
   workflow_dispatch:
 
 permissions:
@@ -25,6 +28,10 @@ jobs:
         run: npm ci
       - name: Tests ausführen
         run: npm test
+      - name: Echte Flugpreise laden (Travelpayouts/Aviasales)
+        env:
+          TRAVELPAYOUTS_TOKEN: ${{ secrets.TRAVELPAYOUTS_TOKEN }}
+        run: node --experimental-strip-types scripts/fetch-prices.mjs
       - name: Produktions-Build
         run: npm run build
       - name: Auf gh-pages-Branch veröffentlichen

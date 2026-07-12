@@ -90,6 +90,11 @@ export function OfferCard({
                   <p className="text-[11px] text-slate-400">
                     Hotel {formatPrice(offer.hotelPricePerPerson)} + Flug{' '}
                     {formatPrice(offer.flightPricePerPerson!)}
+                    {offer.livePrice && (
+                      <span className="ml-1 rounded bg-emerald-100 px-1 py-0.5 text-[10px] font-bold text-emerald-700">
+                        LIVE
+                      </span>
+                    )}
                   </p>
                 )}
                 <p className="text-xs text-slate-500">
