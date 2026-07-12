@@ -42,6 +42,42 @@ export function estimatedFlightHours(distanceKm: number): number {
   return Math.round((0.5 + distanceKm / 800) * 10) / 10
 }
 
+/**
+ * Grobe Flugpreis-Schätzung (hin & zurück, pro Person) nach Distanz,
+ * kalibriert an den echten Preisen der Katalog-Routen.
+ */
+export function estimateFlightPrice(distanceKm: number): number {
+  return Math.round(60 + 0.07 * distanceKm)
+}
+
+/**
+ * Hotelpreis-Schätzung pro Person und Woche nach Hotelkategorie,
+ * abgeleitet aus den Durchschnittswerten des Angebotskatalogs.
+ */
+export function estimateHotelWeekPrice(stars: number | null): number {
+  if (stars === null) return 450
+  if (stars >= 5) return 900
+  if (stars >= 4) return 550
+  return 350
+}
+
+/** Nächstgelegener bekannter Ziel-Flughafen im Umkreis, sonst null. */
+export function nearestKnownAirport(
+  lat: number,
+  lon: number,
+  airports: Record<string, { lat: number; lon: number }>,
+  maxKm = 150,
+): { code: string; distanceKm: number } | null {
+  let best: { code: string; distanceKm: number } | null = null
+  for (const [code, position] of Object.entries(airports)) {
+    const distanceKm = haversineKm(lat, lon, position.lat, position.lon)
+    if (distanceKm <= maxKm && (!best || distanceKm < best.distanceKm)) {
+      best = { code, distanceKm }
+    }
+  }
+  return best
+}
+
 /** Verständliche Meldung für typische Overpass-Fehler. */
 export function friendlyOverpassError(detail: string): string {
   if (detail.includes('429')) {

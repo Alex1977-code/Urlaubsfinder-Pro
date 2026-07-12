@@ -1,15 +1,20 @@
 import { useRef, useState } from 'react'
-import type { Filters, TripParams } from '../types'
+import type { Filters, Offer, TripParams } from '../types'
 import { AIRPORTS, airportLabel } from '../data/airports'
-import { formatBeachDistance, formatFlightHours } from '../lib/format'
+import { DESTINATION_AIRPORTS } from '../data/destinationAirports'
+import { formatBeachDistance, formatFlightHours, formatPrice } from '../lib/format'
 import { bookingSearchUrl, flightsSearchUrl } from '../lib/links'
+import { BAGGAGE_FEE, payingTravellers, personFactor, travellersLabel } from '../lib/trip'
 import {
   OVERPASS_URLS,
+  estimateFlightPrice,
+  estimateHotelWeekPrice,
   estimatedFlightHours,
   filterByBeach,
   filterByStars,
   friendlyOverpassError,
   haversineKm,
+  nearestKnownAirport,
   nominatimUrl,
   overpassQuery,
   parseOverpassHotels,
@@ -36,24 +41,65 @@ export function LiveSearch({
   trip,
   onTripChange,
   filters,
+  offers,
 }: {
   trip: TripParams
   onTripChange: (trip: TripParams) => void
-  /** Die Filter der Seitenleiste; angewendet werden Sterne, Flugzeit, Strandnähe, Abflughafen */
+  /** Die Filter der Seitenleiste; angewendet werden Sterne, Flugzeit, Strandnähe */
   filters: Filters
+  /** Angebotskatalog mit Live-Flugpreisen (für echte Flugpreise bekannter Routen) */
+  offers: Offer[]
 }) {
   const [query, setQuery] = useState('')
   const [radius, setRadius] = useState(10000)
+  // Abflughafen der Live-Suche, Standard: Frankfurt
+  const [departure, setDeparture] = useState('FRA')
   const [status, setStatus] = useState<Status>('idle')
   const [error, setError] = useState('')
   const [place, setPlace] = useState<LivePlace | null>(null)
   const [hotels, setHotels] = useState<LiveHotel[]>([])
-  const [flightHours, setFlightHours] = useState<number | null>(null)
   const [includeUnrated, setIncludeUnrated] = useState(false)
   const abortRef = useRef<AbortController | null>(null)
 
-  const from = filters.airports[0] ?? 'FRA'
+  const from = departure
   const fromAirport = AIRPORTS.find((airport) => airport.code === from)
+
+  // Abgeleitet aus Ziel + Abflughafen (reagiert sofort auf Wechsel, ohne neue Abfrage)
+  const airDistanceKm =
+    place && fromAirport ? haversineKm(fromAirport.lat, fromAirport.lon, place.lat, place.lon) : null
+  const flightHours = airDistanceKm !== null ? estimatedFlightHours(airDistanceKm) : null
+
+  // Echter Live-Flugpreis, wenn das Ziel nahe einer bekannten Route liegt – sonst Distanz-Schätzung
+  const nearestAirport = place
+    ? nearestKnownAirport(place.lat, place.lon, DESTINATION_AIRPORTS)
+    : null
+  const liveOffer = nearestAirport
+    ? offers.find(
+        (offer) =>
+          offer.destinationAirport === nearestAirport.code &&
+          offer.livePrice &&
+          offer.flightPricePerPerson !== null,
+      )
+    : undefined
+  const flightPricePP =
+    liveOffer?.flightPricePerPerson ??
+    (airDistanceKm !== null ? estimateFlightPrice(airDistanceKm) : null)
+  const flightIsLive = liveOffer !== undefined
+
+  // Gesamt- und p.-P.-Preis je Hotel (Hotelanteil geschätzt nach Kategorie)
+  const factor = personFactor(trip)
+  const priceFor = (hotel: LiveHotel) => {
+    const hotelWeek = estimateHotelWeekPrice(hotel.stars)
+    const hotelPP = Math.round(hotelWeek * (trip.nights / 7))
+    const perPerson = hotelPP + (flightPricePP ?? 0)
+    const baggage =
+      flightPricePP !== null && trip.baggage ? BAGGAGE_FEE * payingTravellers(trip) : 0
+    const total =
+      Math.round(hotelWeek * (trip.nights / 7) * factor) +
+      (flightPricePP !== null ? Math.round(flightPricePP * factor) : 0) +
+      baggage
+    return { hotelPP, perPerson, total }
+  }
 
   // Filter aus der Seitenleiste – wirken sofort, ohne neue Abfrage
   const filteredHotels = filterByBeach(
@@ -89,14 +135,7 @@ export function LiveSearch({
       const placeName = geo[0].display_name.split(',').slice(0, 2).join(',')
       setPlace({ name: placeName, lat, lon })
 
-      // 2) Geschätzte Flugzeit ab Abflughafen (für Anzeige und Flugzeit-Filter)
-      setFlightHours(
-        fromAirport
-          ? estimatedFlightHours(haversineKm(fromAirport.lat, fromAirport.lon, lat, lon))
-          : null,
-      )
-
-      // 3) Hotels + Strände im Umkreis laden (Overpass/OSM, mit Ausweich-Server)
+      // 2) Hotels + Strände im Umkreis laden (Overpass/OSM, mit Ausweich-Server)
       let data: unknown = null
       let lastDetail = ''
       for (const url of OVERPASS_URLS) {
@@ -180,6 +219,18 @@ export function LiveSearch({
               </option>
             ))}
           </select>
+          <select
+            value={departure}
+            onChange={(e) => setDeparture(e.target.value)}
+            aria-label="Abflughafen"
+            className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-700 outline-none focus:border-sky-500"
+          >
+            {AIRPORTS.map((airport) => (
+              <option key={airport.code} value={airport.code}>
+                ab {airport.city} ({airport.code})
+              </option>
+            ))}
+          </select>
           <button
             type="submit"
             disabled={status === 'loading'}
@@ -189,7 +240,7 @@ export function LiveSearch({
           </button>
         </div>
 
-        <TripControls trip={trip} onTripChange={onTripChange} showBaggage={false} />
+        <TripControls trip={trip} onTripChange={onTripChange} showBaggage={true} />
       </form>
 
       {status === 'loading' && (
@@ -239,6 +290,14 @@ export function LiveSearch({
             </a>
           </div>
 
+          <p className="mt-2 text-[11px] text-slate-400">
+            Preise: Hotelanteil geschätzt nach Kategorie (≈), Flug{' '}
+            {flightIsLive
+              ? `live (Aviasales, Route ${from} → ${nearestAirport!.code})`
+              : 'nach Distanz geschätzt (≈)'}
+            {trip.baggage && ' · inkl. Aufgabegepäck'} – exakte Hotelpreise über „Preise prüfen“.
+          </p>
+
           {filters.minStars > 0 && (
             <label className="mt-2 flex cursor-pointer items-center gap-1.5 text-xs text-slate-600">
               <input
@@ -281,6 +340,35 @@ export function LiveSearch({
                       </span>
                     )}
                     {hotel.address && <span className="text-xs text-slate-500">{hotel.address}</span>}
+                    {(() => {
+                      const price = priceFor(hotel)
+                      return (
+                        <div className="mt-0.5">
+                          <span className="text-sm font-bold text-slate-900">
+                            ≈ {formatPrice(price.perPerson)}{' '}
+                            <span className="text-xs font-normal text-slate-500">
+                              p. P. (Hotel ≈ {formatPrice(price.hotelPP)}
+                              {flightPricePP !== null && (
+                                <>
+                                  {' '}
+                                  + Flug {formatPrice(flightPricePP)}
+                                  {flightIsLive && (
+                                    <span className="ml-1 rounded bg-emerald-100 px-1 py-0.5 text-[10px] font-bold text-emerald-700">
+                                      LIVE
+                                    </span>
+                                  )}
+                                </>
+                              )}
+                              )
+                            </span>
+                          </span>
+                          <span className="block text-xs text-slate-500">
+                            gesamt ≈ {formatPrice(price.total)} · {travellersLabel(trip)} ·{' '}
+                            {trip.nights} Nächte
+                          </span>
+                        </div>
+                      )
+                    })()}
                     <div className="mt-1 flex flex-wrap gap-1.5 text-xs font-medium">
                       <a
                         href={bookingSearchUrl(`${hotel.name}, ${destinationLabel}`, trip)}

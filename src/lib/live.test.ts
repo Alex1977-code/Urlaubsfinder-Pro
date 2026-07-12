@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import {
+  estimateFlightPrice,
+  estimateHotelWeekPrice,
   estimatedFlightHours,
+  nearestKnownAirport,
   filterByBeach,
   filterByStars,
   friendlyOverpassError,
@@ -10,6 +13,7 @@ import {
   parseOverpassHotels,
 } from './live'
 import { AIRPORTS } from '../data/airports'
+import { DESTINATION_AIRPORTS } from '../data/destinationAirports'
 
 describe('nominatimUrl', () => {
   it('kodiert die Suchanfrage', () => {
@@ -160,5 +164,27 @@ describe('friendlyOverpassError', () => {
     expect(friendlyOverpassError('HTTP 429')).toContain('ausgelastet')
     expect(friendlyOverpassError('HTTP 504')).toContain('Umkreis verkleinern')
     expect(friendlyOverpassError('HTTP 500')).toContain('HTTP 500')
+  })
+})
+
+describe('Preis-Schätzer der Live-Suche', () => {
+  it('estimateFlightPrice liegt nahe an echten Routenpreisen', () => {
+    expect(estimateFlightPrice(1250)).toBeGreaterThan(120) // FRA-PMI real ~169
+    expect(estimateFlightPrice(1250)).toBeLessThan(200)
+    expect(estimateFlightPrice(4800)).toBeGreaterThan(300) // FRA-DXB real ~389
+    expect(estimateFlightPrice(4800)).toBeLessThan(450)
+  })
+
+  it('estimateHotelWeekPrice staffelt nach Kategorie', () => {
+    expect(estimateHotelWeekPrice(5)).toBe(900)
+    expect(estimateHotelWeekPrice(4)).toBe(550)
+    expect(estimateHotelWeekPrice(3)).toBe(350)
+    expect(estimateHotelWeekPrice(null)).toBe(450)
+  })
+
+  it('nearestKnownAirport findet PMI für Alcúdia und nichts mitten im Ozean', () => {
+    const alcudia = nearestKnownAirport(39.79, 3.12, DESTINATION_AIRPORTS)
+    expect(alcudia?.code).toBe('PMI')
+    expect(nearestKnownAirport(0, -40, DESTINATION_AIRPORTS)).toBeNull()
   })
 })

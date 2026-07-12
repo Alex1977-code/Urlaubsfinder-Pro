@@ -130,7 +130,7 @@ export default function App() {
               </div>
             </aside>
             <section aria-label="Live-Suche">
-              <LiveSearch trip={trip} onTripChange={setTrip} filters={filters} />
+              <LiveSearch trip={trip} onTripChange={setTrip} filters={filters} offers={offers} />
             </section>
           </div>
         )}
