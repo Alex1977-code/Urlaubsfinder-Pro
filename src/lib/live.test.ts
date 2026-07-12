@@ -11,6 +11,7 @@ import {
   nominatimUrl,
   overpassQuery,
   parseOverpassHotels,
+  reachableDestinations,
 } from './live'
 import { AIRPORTS } from '../data/airports'
 import { DESTINATION_AIRPORTS } from '../data/destinationAirports'
@@ -186,5 +187,24 @@ describe('Preis-Schätzer der Live-Suche', () => {
     const alcudia = nearestKnownAirport(39.79, 3.12, DESTINATION_AIRPORTS)
     expect(alcudia?.code).toBe('PMI')
     expect(nearestKnownAirport(0, -40, DESTINATION_AIRPORTS)).toBeNull()
+  })
+})
+
+describe('reachableDestinations', () => {
+  const fra = AIRPORTS.find((a) => a.code === 'FRA')!
+
+  it('liefert Ziele innerhalb der max. Flugzeit, sortiert nach Flugzeit', () => {
+    const within3h = reachableDestinations(fra, 3, DESTINATION_AIRPORTS)
+    expect(within3h.map((d) => d.code)).toContain('PMI')
+    expect(within3h.map((d) => d.code)).not.toContain('PUJ')
+    expect(within3h.map((d) => d.code)).not.toContain('DPS')
+    const hours = within3h.map((d) => d.flightHours)
+    expect(hours).toEqual([...hours].sort((a, b) => a - b))
+  })
+
+  it('ohne Limit kommen alle bekannten Ziele', () => {
+    expect(reachableDestinations(fra, null, DESTINATION_AIRPORTS)).toHaveLength(
+      Object.keys(DESTINATION_AIRPORTS).length,
+    )
   })
 })

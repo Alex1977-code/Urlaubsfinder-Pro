@@ -78,6 +78,35 @@ export function nearestKnownAirport(
   return best
 }
 
+export interface ReachableDestination {
+  code: string
+  name: string
+  lat: number
+  lon: number
+  flightHours: number
+}
+
+/**
+ * Alle bekannten Reiseziele innerhalb der max. Flugzeit ab einem
+ * Abflughafen, sortiert nach Flugzeit (Entdecker-Modus ohne Zielangabe).
+ */
+export function reachableDestinations(
+  from: { lat: number; lon: number },
+  maxFlightHours: number | null,
+  airports: Record<string, { lat: number; lon: number; name: string }>,
+): ReachableDestination[] {
+  return Object.entries(airports)
+    .map(([code, airport]) => ({
+      code,
+      name: airport.name,
+      lat: airport.lat,
+      lon: airport.lon,
+      flightHours: estimatedFlightHours(haversineKm(from.lat, from.lon, airport.lat, airport.lon)),
+    }))
+    .filter((destination) => maxFlightHours === null || destination.flightHours <= maxFlightHours)
+    .sort((a, b) => a.flightHours - b.flightHours)
+}
+
 /** Verständliche Meldung für typische Overpass-Fehler. */
 export function friendlyOverpassError(detail: string): string {
   if (detail.includes('429')) {

@@ -18,6 +18,7 @@ import {
   nominatimUrl,
   overpassQuery,
   parseOverpassHotels,
+  reachableDestinations,
   type LiveHotel,
   type LivePlace,
 } from '../lib/live'
@@ -31,7 +32,7 @@ const FLIGHT_HOUR_OPTIONS = [2, 3, 4, 5, 6, 8, 10, 12]
 
 const MAX_SHOWN = 60
 
-type Status = 'idle' | 'loading' | 'done' | 'error'
+type Status = 'idle' | 'loading' | 'done' | 'error' | 'destinations'
 
 function StarsInline({ stars }: { stars: number }) {
   return <span className="text-amber-400">{'★'.repeat(Math.round(stars))}</span>
@@ -112,8 +113,36 @@ export function LiveSearch({
   const overFlightLimit =
     filters.maxFlightHours !== null && flightHours !== null && flightHours > filters.maxFlightHours
 
+  /** Hotels + Strände rund um bekannte Koordinaten laden (ohne Geokodierung). */
+  const runHotelSearch = async (lat: number, lon: number, placeName: string) => {
+    abortRef.current?.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
+    setStatus('loading')
+    setError('')
+    setPlace({ name: placeName, lat, lon })
+    try {
+      await loadHotels(controller, lat, lon)
+    } catch (err) {
+      if (controller.signal.aborted) return
+      setStatus('error')
+      setError(
+        err instanceof Error
+          ? `${err.message}. Bitte später erneut versuchen.`
+          : 'Unbekannter Fehler. Bitte später erneut versuchen.',
+      )
+    }
+  }
+
   const search = async () => {
-    if (!query.trim()) return
+    // Ohne Ziel: Entdecker-Modus – alle Ziele innerhalb der max. Flugzeit
+    if (!query.trim()) {
+      abortRef.current?.abort()
+      setPlace(null)
+      setHotels([])
+      setStatus('destinations')
+      return
+    }
     abortRef.current?.abort()
     const controller = new AbortController()
     abortRef.current = controller
@@ -137,8 +166,21 @@ export function LiveSearch({
       const lon = Number(geo[0].lon)
       const placeName = geo[0].display_name.split(',').slice(0, 2).join(',')
       setPlace({ name: placeName, lat, lon })
+      await loadHotels(controller, lat, lon)
+    } catch (err) {
+      if (controller.signal.aborted) return
+      setStatus('error')
+      setError(
+        err instanceof Error
+          ? `${err.message}. Bitte später erneut versuchen.`
+          : 'Unbekannter Fehler. Bitte später erneut versuchen.',
+      )
+    }
+  }
 
-      // 2) Hotels + Strände laden (Overpass/OSM, mit Ausweich-Server);
+  const loadHotels = async (controller: AbortController, lat: number, lon: number) => {
+    {
+      // Hotels + Strände laden (Overpass/OSM, mit Ausweich-Server);
       //    der Suchbereich wird automatisch erweitert, wenn nichts erfasst ist
       let lastDetail = ''
       const fetchHotels = async (radiusM: number): Promise<LiveHotel[] | null> => {
@@ -184,25 +226,24 @@ export function LiveSearch({
       setHotels(parsed)
       setUsedRadius(radiusUsed)
       setStatus('done')
-    } catch (err) {
-      if (controller.signal.aborted) return
-      setStatus('error')
-      setError(
-        err instanceof Error
-          ? `${err.message}. Bitte später erneut versuchen.`
-          : 'Unbekannter Fehler. Bitte später erneut versuchen.',
-      )
     }
   }
 
   const destinationLabel = place ? place.name.split(',')[0] : query
+
+  // Entdecker-Modus: alle bekannten Ziele innerhalb der max. Flugzeit
+  const reachable = fromAirport
+    ? reachableDestinations(fromAirport, filters.maxFlightHours, DESTINATION_AIRPORTS)
+    : []
 
   return (
     <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5">
       <h2 className="text-base font-bold text-slate-900">🌐 Live-Suche: alle Hotels eines Ziels</h2>
       <p className="mt-1 text-sm text-slate-500">
         Fragt in Echtzeit alle in OpenStreetMap erfassten Hotels ab – für jedes Ziel weltweit.
-        Reisedaten und Filter (links) gelten wie bei den empfohlenen Angeboten.
+        Ohne Zielangabe zeigt „Hotels laden“ alle Ziele innerhalb deiner max. Flugzeit ab{' '}
+        {airportLabel(from)}. Reisedaten und Filter (links) gelten wie bei den empfohlenen
+        Angeboten.
       </p>
 
       <form
@@ -217,9 +258,8 @@ export function LiveSearch({
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Beliebiges Reiseziel – z. B. Alcúdia, Side, Punta Cana …"
-            aria-label="Reiseziel für die Live-Suche"
-            required
+            placeholder="Reiseziel – oder leer lassen für alle Ziele in Flugreichweite"
+            aria-label="Reiseziel für die Live-Suche (optional)"
             className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-sky-500 focus:bg-white focus:ring-2 focus:ring-sky-200"
           />
           <select
@@ -269,6 +309,63 @@ export function LiveSearch({
 
       {status === 'error' && (
         <p className="mt-4 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">⚠️ {error}</p>
+      )}
+
+      {status === 'destinations' && (
+        <div className="mt-5">
+          <h3 className="text-sm font-medium text-slate-600">
+            <strong className="text-lg font-bold text-slate-900">{reachable.length}</strong> Ziele
+            {filters.maxFlightHours !== null
+              ? ` innerhalb von ${filters.maxFlightHours} Std. Flugzeit`
+              : ''}{' '}
+            ab {airportLabel(from)} – Ziel wählen, um alle Hotels dort zu laden:
+          </h3>
+          {reachable.length === 0 ? (
+            <p className="mt-3 text-sm text-slate-500">
+              Kein bekanntes Ziel liegt innerhalb dieser Flugzeit – erhöhe die max. Flugzeit.
+            </p>
+          ) : (
+            <ul className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {reachable.map((destination) => {
+                const liveOfferPrice = offers.find(
+                  (offer) =>
+                    offer.destinationAirport === destination.code &&
+                    offer.livePrice &&
+                    offer.flightPricePerPerson !== null,
+                )?.flightPricePerPerson
+                return (
+                  <li key={destination.code}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setQuery(destination.name)
+                        void runHotelSearch(destination.lat, destination.lon, destination.name)
+                      }}
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50/60 px-3 py-2.5 text-left transition hover:border-sky-400 hover:bg-sky-50"
+                    >
+                      <span className="block text-sm font-semibold text-slate-900">
+                        {destination.name}{' '}
+                        <span className="font-normal text-slate-400">({destination.code})</span>
+                      </span>
+                      <span className="block text-xs text-slate-500">
+                        ✈️ {formatFlightHours(destination.flightHours)}
+                        {liveOfferPrice != null && (
+                          <>
+                            {' '}
+                            · Flug ab {formatPrice(liveOfferPrice)}
+                            <span className="ml-1 rounded bg-emerald-100 px-1 py-0.5 text-[10px] font-bold text-emerald-700">
+                              LIVE
+                            </span>
+                          </>
+                        )}
+                      </span>
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+        </div>
       )}
 
       {status === 'done' && place && overFlightLimit && (
