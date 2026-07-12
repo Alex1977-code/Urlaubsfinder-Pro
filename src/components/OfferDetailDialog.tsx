@@ -2,7 +2,9 @@ import { useEffect, useRef } from 'react'
 import type { Offer, TripParams } from '../types'
 import { airportLabel } from '../data/airports'
 import { SCORE_KEYS, SCORE_LABELS } from '../lib/filter'
+import { photoPageUrl } from '../lib/images'
 import { bookingUrl, flightsUrl, mapsUrl } from '../lib/links'
+import { OfferPhoto } from './OfferPhoto'
 import { formatBeachDistance, formatFlightHours, formatPrice, ratingWord } from '../lib/format'
 import { totalPrice, tripSummary } from '../lib/trip'
 import { Badge, ScoreBar, Stars } from './ui'
@@ -51,12 +53,7 @@ export function OfferDetailDialog({
     >
       {offer && (
         <div className="max-h-[85vh] overflow-y-auto">
-          <div
-            className={`relative flex h-32 items-center justify-center bg-gradient-to-br ${offer.gradient}`}
-          >
-            <span className="text-6xl drop-shadow-lg" aria-hidden="true">
-              {offer.emoji}
-            </span>
+          <OfferPhoto offer={offer} className="h-44">
             <button
               type="button"
               onClick={onClose}
@@ -65,7 +62,7 @@ export function OfferDetailDialog({
             >
               ✕
             </button>
-          </div>
+          </OfferPhoto>
 
           <div className="flex flex-col gap-4 p-5">
             <div className="flex items-start justify-between gap-3">
@@ -160,6 +157,21 @@ export function OfferDetailDialog({
               <p className="text-center text-[11px] text-slate-400">
                 Links öffnen echte, tagesaktuelle Angebote in einem neuen Tab. Die Preise in dieser
                 Übersicht sind Richtwerte.
+                {photoPageUrl(offer) && (
+                  <>
+                    {' '}
+                    Foto:{' '}
+                    <a
+                      href={photoPageUrl(offer)!}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline hover:text-slate-600"
+                    >
+                      Wikimedia Commons
+                    </a>
+                    .
+                  </>
+                )}
               </p>
             </div>
           </div>

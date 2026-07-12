@@ -38,6 +38,7 @@ const baseOffer: Offer = {
   departureAirports: ['FRA', 'MUC'],
   destinationAirport: 'PMI',
   board: 'All Inclusive',
+  photoFile: null,
   gradient: '',
   emoji: '🧪',
 }

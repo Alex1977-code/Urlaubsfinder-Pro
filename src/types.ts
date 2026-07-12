@@ -49,9 +49,11 @@ export interface Offer {
   destinationAirport: string | null
   /** Verpflegung, z. B. "All Inclusive" */
   board: string
-  /** Tailwind-Gradient für das Kartenbild */
+  /** Hotelfoto: Dateiname auf Wikimedia Commons (ohne "File:"-Präfix), null = kein Foto */
+  photoFile: string | null
+  /** Tailwind-Gradient als Fallback, wenn kein Foto verfügbar ist */
   gradient: string
-  /** Symbol für das Reiseziel */
+  /** Symbol für das Reiseziel (Fallback ohne Foto) */
   emoji: string
 }
 

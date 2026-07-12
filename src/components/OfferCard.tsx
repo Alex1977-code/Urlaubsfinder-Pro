@@ -3,6 +3,7 @@ import { airportLabel } from '../data/airports'
 import { formatBeachDistance, formatFlightHours, formatPrice, ratingWord } from '../lib/format'
 import { totalPrice, travellersLabel } from '../lib/trip'
 import { Badge, ScoreBar, Stars } from './ui'
+import { OfferPhoto } from './OfferPhoto'
 
 export function OfferCard({
   offer,
@@ -16,17 +17,11 @@ export function OfferCard({
   return (
     <article className="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-900/5 transition hover:shadow-lg">
       <div className="flex flex-col sm:flex-row">
-        {/* Bild-Platzhalter mit Reiseziel-Symbol */}
-        <div
-          className={`relative flex h-40 shrink-0 items-center justify-center bg-gradient-to-br sm:h-auto sm:w-52 ${offer.gradient}`}
-        >
-          <span className="text-6xl drop-shadow-lg transition group-hover:scale-110" aria-hidden="true">
-            {offer.emoji}
-          </span>
+        <OfferPhoto offer={offer} className="h-44 shrink-0 sm:h-auto sm:w-52">
           <span className="absolute bottom-2 left-2 rounded-full bg-black/35 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">
             ☀️ {offer.sunHoursPerDay} Std. Sonne/Tag
           </span>
-        </div>
+        </OfferPhoto>
 
         <div className="flex flex-1 flex-col gap-3 p-4 sm:p-5">
           <div className="flex items-start justify-between gap-3">
