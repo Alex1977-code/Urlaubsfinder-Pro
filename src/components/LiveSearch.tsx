@@ -1,11 +1,12 @@
 import { useRef, useState } from 'react'
-import type { TripParams } from '../types'
+import type { Filters, TripParams } from '../types'
 import { AIRPORTS, airportLabel } from '../data/airports'
-import { formatFlightHours } from '../lib/format'
+import { formatBeachDistance, formatFlightHours } from '../lib/format'
 import { bookingSearchUrl, flightsSearchUrl } from '../lib/links'
 import {
   OVERPASS_URLS,
   estimatedFlightHours,
+  filterByBeach,
   filterByStars,
   friendlyOverpassError,
   haversineKm,
@@ -15,6 +16,7 @@ import {
   type LiveHotel,
   type LivePlace,
 } from '../lib/live'
+import { TripControls } from './SearchBar'
 
 const RADIUS_OPTIONS = [
   { value: 3000, label: '3 km' },
@@ -24,29 +26,21 @@ const RADIUS_OPTIONS = [
 
 const MAX_SHOWN = 60
 
-type Status = 'idle' | 'loading' | 'done' | 'error' | 'blocked'
+type Status = 'idle' | 'loading' | 'done' | 'error'
 
 function StarsInline({ stars }: { stars: number }) {
   return <span className="text-amber-400">{'★'.repeat(Math.round(stars))}</span>
 }
 
-const FLIGHT_HOUR_OPTIONS = [2, 3, 4, 5, 6, 8, 10, 12]
-
 export function LiveSearch({
   trip,
-  minStars,
-  maxFlightHours,
-  onMinStarsChange,
-  onMaxFlightHoursChange,
-  preferredAirport,
+  onTripChange,
+  filters,
 }: {
   trip: TripParams
-  minStars: number
-  /** Max. Flugzeit aus den Filtern, null = egal */
-  maxFlightHours: number | null
-  onMinStarsChange: (stars: number) => void
-  onMaxFlightHoursChange: (hours: number | null) => void
-  preferredAirport?: string
+  onTripChange: (trip: TripParams) => void
+  /** Die Filter der Seitenleiste; angewendet werden Sterne, Flugzeit, Strandnähe, Abflughafen */
+  filters: Filters
 }) {
   const [query, setQuery] = useState('')
   const [radius, setRadius] = useState(10000)
@@ -58,14 +52,18 @@ export function LiveSearch({
   const [includeUnrated, setIncludeUnrated] = useState(false)
   const abortRef = useRef<AbortController | null>(null)
 
-  const from = preferredAirport ?? 'FRA'
+  const from = filters.airports[0] ?? 'FRA'
   const fromAirport = AIRPORTS.find((airport) => airport.code === from)
-  const filteredHotels = filterByStars(hotels, minStars, includeUnrated)
 
-  const search = async (
-    searchRadius: number = radius,
-    maxFlight: number | null = maxFlightHours,
-  ) => {
+  // Filter aus der Seitenleiste – wirken sofort, ohne neue Abfrage
+  const filteredHotels = filterByBeach(
+    filterByStars(hotels, filters.minStars, includeUnrated),
+    filters.maxBeachDistance,
+  )
+  const overFlightLimit =
+    filters.maxFlightHours !== null && flightHours !== null && flightHours > filters.maxFlightHours
+
+  const search = async (searchRadius: number = radius) => {
     if (!query.trim()) return
     abortRef.current?.abort()
     const controller = new AbortController()
@@ -91,18 +89,14 @@ export function LiveSearch({
       const placeName = geo[0].display_name.split(',').slice(0, 2).join(',')
       setPlace({ name: placeName, lat, lon })
 
-      // 2) Geschätzte Flugzeit ab Abflughafen gegen den Filter prüfen
-      const estimated = fromAirport
-        ? estimatedFlightHours(haversineKm(fromAirport.lat, fromAirport.lon, lat, lon))
-        : null
-      setFlightHours(estimated)
-      if (maxFlight !== null && estimated !== null && estimated > maxFlight) {
-        setHotels([])
-        setStatus('blocked')
-        return
-      }
+      // 2) Geschätzte Flugzeit ab Abflughafen (für Anzeige und Flugzeit-Filter)
+      setFlightHours(
+        fromAirport
+          ? estimatedFlightHours(haversineKm(fromAirport.lat, fromAirport.lon, lat, lon))
+          : null,
+      )
 
-      // 3) Alle Hotels im Umkreis laden (Overpass/OpenStreetMap, mit Ausweich-Server)
+      // 3) Hotels + Strände im Umkreis laden (Overpass/OSM, mit Ausweich-Server)
       let data: unknown = null
       let lastDetail = ''
       for (const url of OVERPASS_URLS) {
@@ -141,6 +135,7 @@ export function LiveSearch({
       )
     }
   }
+
   const destinationLabel = place ? place.name.split(',')[0] : query
 
   return (
@@ -148,109 +143,54 @@ export function LiveSearch({
       <h2 className="text-base font-bold text-slate-900">🌐 Live-Suche: alle Hotels eines Ziels</h2>
       <p className="mt-1 text-sm text-slate-500">
         Fragt in Echtzeit alle in OpenStreetMap erfassten Hotels ab – für jedes Ziel weltweit.
-        Preise &amp; Verfügbarkeit öffnen sich pro Hotel bei Booking.com mit deinen Reisedaten.
+        Reisedaten und Filter (links) gelten wie bei den empfohlenen Angeboten.
       </p>
 
       <form
-        className="mt-4 flex flex-col gap-2 sm:flex-row"
+        className="mt-4 flex flex-col gap-2"
         onSubmit={(e) => {
           e.preventDefault()
           void search()
         }}
       >
-        <input
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Beliebiges Reiseziel – z. B. Alcúdia, Side, Punta Cana …"
-          aria-label="Reiseziel für die Live-Suche"
-          required
-          className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-sky-500 focus:bg-white focus:ring-2 focus:ring-sky-200"
-        />
-        <select
-          value={radius}
-          onChange={(e) => {
-            const value = Number(e.target.value)
-            setRadius(value)
-            // Nach einer Suche lädt der neue Umkreis direkt neu
-            if (status !== 'idle') void search(value)
-          }}
-          aria-label="Suchradius"
-          className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-700 outline-none focus:border-sky-500"
-        >
-          {RADIUS_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              Umkreis {option.label}
-            </option>
-          ))}
-        </select>
-        <button
-          type="submit"
-          disabled={status === 'loading'}
-          className="rounded-xl bg-gradient-to-r from-sky-600 to-cyan-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-600/30 transition hover:from-sky-700 hover:to-cyan-600 disabled:opacity-60"
-        >
-          {status === 'loading' ? 'Suche läuft …' : 'Hotels laden'}
-        </button>
-      </form>
-
-      {/* Filter – immer sichtbar, wirken direkt auf die Live-Ergebnisse */}
-      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl bg-slate-50 px-3 py-2.5">
-        <span className="text-xs font-bold tracking-wide text-sky-900/60 uppercase">Filter</span>
-        <div className="flex items-center gap-1.5">
-          <span className="text-xs text-slate-600">Hotelkategorie:</span>
-          <div className="flex gap-1" role="radiogroup" aria-label="Mindest-Sterne (Live-Suche)">
-            {[0, 3, 4, 5].map((stars) => (
-              <button
-                key={stars}
-                type="button"
-                role="radio"
-                aria-checked={minStars === stars}
-                onClick={() => onMinStarsChange(stars)}
-                className={`rounded-lg border px-2.5 py-1 text-xs font-medium transition ${
-                  minStars === stars
-                    ? 'border-sky-600 bg-sky-50 text-sky-700'
-                    : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
-                }`}
-              >
-                {stars === 0 ? 'Alle' : `${stars}★+`}
-              </button>
-            ))}
-          </div>
-        </div>
-        <label className="flex items-center gap-1.5 text-xs text-slate-600">
-          Max. Flugzeit ab {airportLabel(from)}:
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Beliebiges Reiseziel – z. B. Alcúdia, Side, Punta Cana …"
+            aria-label="Reiseziel für die Live-Suche"
+            required
+            className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-sky-500 focus:bg-white focus:ring-2 focus:ring-sky-200"
+          />
           <select
-            value={maxFlightHours === null ? '' : String(maxFlightHours)}
+            value={radius}
             onChange={(e) => {
-              const value = e.target.value === '' ? null : Number(e.target.value)
-              onMaxFlightHoursChange(value)
-              if (status === 'blocked' || status === 'done') void search(radius, value)
+              const value = Number(e.target.value)
+              setRadius(value)
+              // Nach einer Suche lädt der neue Umkreis direkt neu
+              if (status !== 'idle') void search(value)
             }}
-            className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-700 outline-none focus:border-sky-500"
+            aria-label="Suchradius"
+            className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-700 outline-none focus:border-sky-500"
           >
-            <option value="">Egal</option>
-            {FLIGHT_HOUR_OPTIONS.map((hours) => (
-              <option key={hours} value={hours}>
-                {hours} Std.
+            {RADIUS_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                Umkreis {option.label}
               </option>
             ))}
           </select>
-        </label>
-        {minStars > 0 && (
-          <label className="flex cursor-pointer items-center gap-1.5 text-xs text-slate-600">
-            <input
-              type="checkbox"
-              checked={includeUnrated}
-              onChange={(e) => setIncludeUnrated(e.target.checked)}
-              className="size-3.5 rounded border-slate-300 accent-sky-600"
-            />
-            Hotels ohne Sterne-Angabe einbeziehen
-          </label>
-        )}
-        <span className="ml-auto text-[11px] text-slate-400">
-          Bewertung, Pool usw. sind in OpenStreetMap nicht erfasst
-        </span>
-      </div>
+          <button
+            type="submit"
+            disabled={status === 'loading'}
+            className="rounded-xl bg-gradient-to-r from-sky-600 to-cyan-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-600/30 transition hover:from-sky-700 hover:to-cyan-600 disabled:opacity-60"
+          >
+            {status === 'loading' ? 'Suche läuft …' : 'Hotels laden'}
+          </button>
+        </div>
+
+        <TripControls trip={trip} onTripChange={onTripChange} showBaggage={false} />
+      </form>
 
       {status === 'loading' && (
         <p className="mt-4 animate-pulse text-sm text-slate-500">
@@ -262,29 +202,30 @@ export function LiveSearch({
         <p className="mt-4 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">⚠️ {error}</p>
       )}
 
-      {status === 'blocked' && place && flightHours !== null && (
+      {status === 'done' && place && overFlightLimit && (
         <div className="mt-4 rounded-lg bg-amber-50 px-3 py-2.5 text-sm text-amber-800">
           ✈️ {place.name} liegt bei ca.{' '}
-          <strong>{flightHours.toLocaleString('de-DE')} Std. Flugzeit</strong> ab{' '}
-          {airportLabel(from)} – über deiner eingestellten max. Flugzeit von {maxFlightHours} Std.
+          <strong>{flightHours!.toLocaleString('de-DE')} Std. Flugzeit</strong> ab{' '}
+          {airportLabel(from)} – über deiner max. Flugzeit von {filters.maxFlightHours} Std.
           <span className="mt-1 block text-xs text-amber-700">
-            Erhöhe den Flugzeit-Filter (unter „Empfohlene Angebote“ → Max. Flugzeit) oder wähle ein
-            näheres Ziel.
+            Erhöhe links den Filter „Max. Flugzeit“ oder wähle ein näheres Ziel.
           </span>
         </div>
       )}
 
-      {status === 'done' && place && (
+      {status === 'done' && place && !overFlightLimit && (
         <div className="mt-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h3 className="text-sm font-medium text-slate-600">
               <strong className="text-lg font-bold text-slate-900">{filteredHotels.length}</strong>
-              {minStars > 0 && <span className="text-slate-400"> von {hotels.length}</span>} Hotels
-              bei {place.name} <span className="text-slate-400">(Quelle: OpenStreetMap)</span>
+              {filteredHotels.length !== hotels.length && (
+                <span className="text-slate-400"> von {hotels.length}</span>
+              )}{' '}
+              Hotels bei {place.name} <span className="text-slate-400">(Quelle: OpenStreetMap)</span>
               {flightHours !== null && (
                 <span className="mt-1 block text-xs font-normal text-sky-700 sm:mt-0 sm:ml-2 sm:inline">
                   ✈️ {formatFlightHours(flightHours)} ab {airportLabel(from)}
-                  {maxFlightHours !== null && ` (Filter: max. ${maxFlightHours} Std. ✓)`}
+                  {filters.maxFlightHours !== null && ` (Filter: max. ${filters.maxFlightHours} Std. ✓)`}
                 </span>
               )}
             </h3>
@@ -298,11 +239,23 @@ export function LiveSearch({
             </a>
           </div>
 
+          {filters.minStars > 0 && (
+            <label className="mt-2 flex cursor-pointer items-center gap-1.5 text-xs text-slate-600">
+              <input
+                type="checkbox"
+                checked={includeUnrated}
+                onChange={(e) => setIncludeUnrated(e.target.checked)}
+                className="size-3.5 rounded border-slate-300 accent-sky-600"
+              />
+              Hotels ohne Sterne-Angabe einbeziehen (OpenStreetMap kennt nicht überall Sterne)
+            </label>
+          )}
+
           {filteredHotels.length === 0 ? (
             <p className="mt-4 text-sm text-slate-500">
               {hotels.length === 0
                 ? 'In diesem Umkreis sind keine Hotels in OpenStreetMap erfasst – Radius vergrößern oder anderen Ort probieren.'
-                : 'Kein Hotel erfüllt den Sterne-Filter – Kategorie lockern oder Hotels ohne Sterne-Angabe einbeziehen.'}
+                : 'Kein Hotel erfüllt die aktiven Filter (Sterne/Strandnähe) – Filter links lockern oder Hotels ohne Sterne-Angabe einbeziehen.'}
             </p>
           ) : (
             <>
@@ -322,6 +275,11 @@ export function LiveSearch({
                           : `${hotel.distanceKm.toLocaleString('de-DE', { maximumFractionDigits: 1 })} km`}
                       </span>
                     </div>
+                    {hotel.beachDistanceM !== null && (
+                      <span className="text-xs text-sky-700">
+                        🏖️ {formatBeachDistance(hotel.beachDistanceM)}
+                      </span>
+                    )}
                     {hotel.address && <span className="text-xs text-slate-500">{hotel.address}</span>}
                     <div className="mt-1 flex flex-wrap gap-1.5 text-xs font-medium">
                       <a

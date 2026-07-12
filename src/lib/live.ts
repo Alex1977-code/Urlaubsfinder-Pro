@@ -12,6 +12,8 @@ export interface LiveHotel {
   lat: number
   lon: number
   distanceKm: number
+  /** Entfernung zum nächsten OSM-Strand in Metern, null wenn keiner erfasst */
+  beachDistanceM: number | null
   website: string | null
   address: string | null
 }
@@ -51,9 +53,19 @@ export function friendlyOverpassError(detail: string): string {
   return `Hotelabfrage fehlgeschlagen (${detail}). Bitte später erneut versuchen.`
 }
 
-/** Overpass-QL: alle Hotels (Nodes, Ways, Relations) im Umkreis. */
+/**
+ * Overpass-QL: alle Hotels im Umkreis plus Strände (etwas größerer Radius,
+ * damit auch Hotels am Rand ihren nächsten Strand finden).
+ */
 export function overpassQuery(lat: number, lon: number, radiusM: number): string {
-  return `[out:json][timeout:25];nwr["tourism"="hotel"](around:${radiusM},${Number(lat.toFixed(5))},${Number(lon.toFixed(5))});out center tags;`
+  const la = Number(lat.toFixed(5))
+  const lo = Number(lon.toFixed(5))
+  return (
+    `[out:json][timeout:30];(` +
+    `nwr["tourism"="hotel"](around:${radiusM},${la},${lo});` +
+    `nwr["natural"="beach"](around:${radiusM + 2000},${la},${lo});` +
+    `);out center tags;`
+  )
 }
 
 /** Großkreis-Entfernung in Kilometern. */
@@ -93,19 +105,28 @@ interface OverpassElement {
   tags?: Record<string, string>
 }
 
-/** Overpass-Antwort in eine sortierte Hotel-Liste umwandeln. */
+/**
+ * Overpass-Antwort in eine sortierte Hotel-Liste umwandeln. Strände aus
+ * derselben Antwort liefern die Strand-Entfernung je Hotel.
+ */
 export function parseOverpassHotels(
   json: { elements?: OverpassElement[] },
   centerLat: number,
   centerLon: number,
 ): LiveHotel[] {
   const hotels: LiveHotel[] = []
+  const beaches: { lat: number; lon: number }[] = []
+
   for (const el of json.elements ?? []) {
     const tags = el.tags ?? {}
-    const name = tags.name
     const lat = el.lat ?? el.center?.lat
     const lon = el.lon ?? el.center?.lon
-    if (!name || lat === undefined || lon === undefined) continue
+    if (lat === undefined || lon === undefined) continue
+    if (tags.natural === 'beach') {
+      beaches.push({ lat, lon })
+      continue
+    }
+    if (tags.tourism !== 'hotel' || !tags.name) continue
     const stars = tags.stars ? Number.parseFloat(tags.stars) : null
     const addressParts = [
       [tags['addr:street'], tags['addr:housenumber']].filter(Boolean).join(' '),
@@ -113,14 +134,33 @@ export function parseOverpassHotels(
     ].filter(Boolean)
     hotels.push({
       id: `${el.type}/${el.id}`,
-      name,
+      name: tags.name,
       stars: stars !== null && Number.isFinite(stars) ? stars : null,
       lat,
       lon,
       distanceKm: haversineKm(centerLat, centerLon, lat, lon),
+      beachDistanceM: null,
       website: tags.website ?? tags['contact:website'] ?? null,
       address: addressParts.length > 0 ? addressParts.join(', ') : null,
     })
   }
+
+  if (beaches.length > 0) {
+    for (const hotel of hotels) {
+      const nearest = Math.min(
+        ...beaches.map((beach) => haversineKm(hotel.lat, hotel.lon, beach.lat, beach.lon)),
+      )
+      hotel.beachDistanceM = Math.round(nearest * 1000)
+    }
+  }
+
   return hotels.sort((a, b) => a.distanceKm - b.distanceKm)
+}
+
+/** Strandnähe-Filter: null = egal; sonst nur Hotels mit erfasstem Strand im Limit. */
+export function filterByBeach(hotels: LiveHotel[], maxBeachDistance: number | null): LiveHotel[] {
+  if (maxBeachDistance === null) return hotels
+  return hotels.filter(
+    (hotel) => hotel.beachDistanceM !== null && hotel.beachDistanceM <= maxBeachDistance,
+  )
 }

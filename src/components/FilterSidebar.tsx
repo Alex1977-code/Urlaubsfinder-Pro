@@ -14,9 +14,12 @@ const BEACH_OPTIONS: { value: number | null; label: string }[] = [
 export function FilterSidebar({
   filters,
   onChange,
+  liveMode = false,
 }: {
   filters: Filters
   onChange: (filters: Filters) => void
+  /** In der Live-Suche wirken nur Filter, für die OpenStreetMap Daten hat */
+  liveMode?: boolean
 }) {
   const set = <K extends keyof Filters>(key: K, value: Filters[K]) =>
     onChange({ ...filters, [key]: value })
@@ -25,6 +28,8 @@ export function FilterSidebar({
     onChange({ ...filters, scoreLevels: { ...filters.scoreLevels, [key]: level } })
 
   const activeCount = countActiveFilters(filters)
+  // Ausgegraut im Live-Modus: Kriterien ohne Datenbasis in OpenStreetMap
+  const inactive = liveMode ? 'pointer-events-none opacity-40 select-none' : ''
 
   return (
     <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5">
@@ -41,6 +46,15 @@ export function FilterSidebar({
         )}
       </div>
 
+      {liveMode && (
+        <p className="mb-3 rounded-lg bg-sky-50 px-2.5 py-2 text-xs text-sky-800">
+          In der Live-Suche wirken <strong>Hotelkategorie</strong>, <strong>max. Flugzeit</strong>,{' '}
+          <strong>Strandnähe</strong> und <strong>Abflughafen</strong>. Ausgegraute Filter brauchen
+          Bewertungs-/Preisdaten, die OpenStreetMap nicht enthält.
+        </p>
+      )}
+
+      <div className={inactive} aria-disabled={liveMode}>
       <FilterSection title="Budget pro Person">
         <SliderRow
           label="Max. Preis"
@@ -52,6 +66,7 @@ export function FilterSidebar({
           onChange={(value) => set('maxPrice', value)}
         />
       </FilterSection>
+      </div>
 
       <FilterSection title="Hotelkategorie">
         <div className="flex gap-1.5" role="radiogroup" aria-label="Mindest-Sterne">
@@ -74,6 +89,7 @@ export function FilterSidebar({
         </div>
       </FilterSection>
 
+      <div className={inactive} aria-disabled={liveMode}>
       <FilterSection title="Gästebewertung">
         <SliderRow
           label="Mindestens"
@@ -85,6 +101,7 @@ export function FilterSidebar({
           onChange={(value) => set('minRating', value)}
         />
       </FilterSection>
+      </div>
 
       <FilterSection title="Max. Flugzeit">
         <SliderRow
@@ -113,6 +130,7 @@ export function FilterSidebar({
         </select>
       </FilterSection>
 
+      <div className={inactive} aria-disabled={liveMode}>
       <FilterSection title="Sonnenfaktor">
         <SliderRow
           label="Sonnenstunden/Tag"
@@ -152,6 +170,7 @@ export function FilterSidebar({
           />
         ))}
       </FilterSection>
+      </div>
 
       <FilterSection title="Abflughafen">
         <div className="grid grid-cols-2 gap-x-2">

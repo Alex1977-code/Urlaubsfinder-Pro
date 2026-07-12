@@ -73,20 +73,22 @@ export default function App() {
       </header>
 
       <main className="mx-auto -mt-16 max-w-6xl px-4 pb-16 sm:px-6">
-        <SearchBar
-          travelType={filters.travelType}
-          onTravelTypeChange={(travelType) => setFilters({ ...filters, travelType })}
-          query={filters.query}
-          onQueryChange={(query) => setFilters({ ...filters, query })}
-          trip={trip}
-          onTripChange={setTrip}
-          onSearch={handleSearch}
-        />
+        {view === 'catalog' && (
+          <SearchBar
+            travelType={filters.travelType}
+            onTravelTypeChange={(travelType) => setFilters({ ...filters, travelType })}
+            query={filters.query}
+            onQueryChange={(query) => setFilters({ ...filters, query })}
+            trip={trip}
+            onTripChange={setTrip}
+            onSearch={handleSearch}
+          />
+        )}
 
         <div
           role="tablist"
           aria-label="Suchmodus"
-          className="mt-6 flex flex-wrap gap-1.5"
+          className={`flex flex-wrap gap-1.5 ${view === 'catalog' ? 'mt-6' : ''}`}
         >
           <button
             type="button"
@@ -113,19 +115,28 @@ export default function App() {
         </div>
 
         {view === 'live' && (
-          <div className="mt-4">
-            <LiveSearch
-              trip={effectiveTrip}
-              minStars={filters.minStars}
-              maxFlightHours={filters.maxFlightHours}
-              onMinStarsChange={(minStars) => setFilters({ ...filters, minStars })}
-              onMaxFlightHoursChange={(maxFlightHours) => setFilters({ ...filters, maxFlightHours })}
-              preferredAirport={filters.airports[0]}
-            />
+          <div className="mt-4 grid gap-6 lg:grid-cols-[300px_1fr]">
+            <aside>
+              <button
+                type="button"
+                onClick={() => setFiltersOpen(!filtersOpen)}
+                className="mb-3 w-full rounded-xl bg-white px-4 py-3 text-left text-sm font-semibold text-slate-800 shadow-sm ring-1 ring-slate-900/5 lg:hidden"
+                aria-expanded={filtersOpen}
+              >
+                {filtersOpen ? '▲ Filter ausblenden' : '▼ Filter anzeigen'}
+              </button>
+              <div className={`${filtersOpen ? 'block' : 'hidden'} lg:block`}>
+                <FilterSidebar filters={filters} onChange={setFilters} liveMode />
+              </div>
+            </aside>
+            <section aria-label="Live-Suche">
+              <LiveSearch trip={trip} onTripChange={setTrip} filters={filters} />
+            </section>
           </div>
         )}
 
-        <div className={`mt-4 grid gap-6 lg:grid-cols-[300px_1fr] ${view === 'live' ? 'hidden' : ''}`}>
+        {view === 'catalog' && (
+        <div className="mt-4 grid gap-6 lg:grid-cols-[300px_1fr]">
           {/* Filter: auf Mobilgeräten einklappbar */}
           <aside>
             <button
@@ -207,6 +218,7 @@ export default function App() {
             )}
           </section>
         </div>
+        )}
       </main>
 
       <OfferDetailDialog
