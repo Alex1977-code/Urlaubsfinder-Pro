@@ -2,6 +2,10 @@
 
 Professionelle Web-App zum Finden von Urlaubsreisen – Pauschalreise, nur Hotel oder nur Flug – mit den Kriterien, die wirklich zählen.
 
+**➡️ Live ausprobieren: [alex1977-code.github.io/Urlaubsfinder-Pro](https://alex1977-code.github.io/Urlaubsfinder-Pro/)**
+
+Die Seite wird bei jedem Push automatisch per GitHub Actions gebaut und auf GitHub Pages veröffentlicht (siehe `.github/workflows/deploy.yml`).
+
 ## Features
 
 **Reiseart:** Pauschalreise · Nur Hotel · Nur Flug
