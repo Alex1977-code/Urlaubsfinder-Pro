@@ -23,11 +23,11 @@ import {
 } from '../lib/live'
 import { TripControls } from './SearchBar'
 
-const RADIUS_OPTIONS = [
-  { value: 3000, label: '3 km' },
-  { value: 10000, label: '10 km' },
-  { value: 25000, label: '25 km' },
-]
+/** Automatischer Suchbereich um den Zielort; wird bei 0 Treffern erweitert. */
+const BASE_RADIUS = 15000
+const EXTENDED_RADIUS = 40000
+
+const FLIGHT_HOUR_OPTIONS = [2, 3, 4, 5, 6, 8, 10, 12]
 
 const MAX_SHOWN = 60
 
@@ -41,17 +41,20 @@ export function LiveSearch({
   trip,
   onTripChange,
   filters,
+  onMaxFlightHoursChange,
   offers,
 }: {
   trip: TripParams
   onTripChange: (trip: TripParams) => void
   /** Die Filter der Seitenleiste; angewendet werden Sterne, Flugzeit, Strandnähe */
   filters: Filters
+  /** Max. Flugzeit ändern (gleicher Filter wie in der Seitenleiste) */
+  onMaxFlightHoursChange: (hours: number | null) => void
   /** Angebotskatalog mit Live-Flugpreisen (für echte Flugpreise bekannter Routen) */
   offers: Offer[]
 }) {
   const [query, setQuery] = useState('')
-  const [radius, setRadius] = useState(10000)
+  const [usedRadius, setUsedRadius] = useState(BASE_RADIUS)
   // Abflughafen der Live-Suche, Standard: Frankfurt
   const [departure, setDeparture] = useState('FRA')
   const [status, setStatus] = useState<Status>('idle')
@@ -109,7 +112,7 @@ export function LiveSearch({
   const overFlightLimit =
     filters.maxFlightHours !== null && flightHours !== null && flightHours > filters.maxFlightHours
 
-  const search = async (searchRadius: number = radius) => {
+  const search = async () => {
     if (!query.trim()) return
     abortRef.current?.abort()
     const controller = new AbortController()
@@ -135,34 +138,51 @@ export function LiveSearch({
       const placeName = geo[0].display_name.split(',').slice(0, 2).join(',')
       setPlace({ name: placeName, lat, lon })
 
-      // 2) Hotels + Strände im Umkreis laden (Overpass/OSM, mit Ausweich-Server)
-      let data: unknown = null
+      // 2) Hotels + Strände laden (Overpass/OSM, mit Ausweich-Server);
+      //    der Suchbereich wird automatisch erweitert, wenn nichts erfasst ist
       let lastDetail = ''
-      for (const url of OVERPASS_URLS) {
-        try {
-          const overpassResponse = await fetch(url, {
-            method: 'POST',
-            body: `data=${encodeURIComponent(overpassQuery(lat, lon, searchRadius))}`,
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            signal: controller.signal,
-          })
-          if (!overpassResponse.ok) {
-            lastDetail = `HTTP ${overpassResponse.status}`
-            continue
+      const fetchHotels = async (radiusM: number): Promise<LiveHotel[] | null> => {
+        for (const url of OVERPASS_URLS) {
+          try {
+            const overpassResponse = await fetch(url, {
+              method: 'POST',
+              body: `data=${encodeURIComponent(overpassQuery(lat, lon, radiusM))}`,
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              signal: controller.signal,
+            })
+            if (!overpassResponse.ok) {
+              lastDetail = `HTTP ${overpassResponse.status}`
+              continue
+            }
+            const data = (await overpassResponse.json()) as Parameters<
+              typeof parseOverpassHotels
+            >[0]
+            return parseOverpassHotels(data, lat, lon)
+          } catch (err) {
+            if (controller.signal.aborted) return null
+            lastDetail = err instanceof Error ? err.message : 'Netzwerkfehler'
           }
-          data = await overpassResponse.json()
-          break
-        } catch (err) {
-          if (controller.signal.aborted) return
-          lastDetail = err instanceof Error ? err.message : 'Netzwerkfehler'
+        }
+        return null
+      }
+
+      let radiusUsed = BASE_RADIUS
+      let parsed = await fetchHotels(BASE_RADIUS)
+      if (parsed !== null && parsed.length === 0) {
+        const wider = await fetchHotels(EXTENDED_RADIUS)
+        if (wider !== null) {
+          parsed = wider
+          radiusUsed = EXTENDED_RADIUS
         }
       }
-      if (data === null) {
+      if (parsed === null) {
+        if (controller.signal.aborted) return
         setStatus('error')
         setError(friendlyOverpassError(lastDetail))
         return
       }
-      setHotels(parseOverpassHotels(data as Parameters<typeof parseOverpassHotels>[0], lat, lon))
+      setHotels(parsed)
+      setUsedRadius(radiusUsed)
       setStatus('done')
     } catch (err) {
       if (controller.signal.aborted) return
@@ -203,19 +223,17 @@ export function LiveSearch({
             className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-sky-500 focus:bg-white focus:ring-2 focus:ring-sky-200"
           />
           <select
-            value={radius}
-            onChange={(e) => {
-              const value = Number(e.target.value)
-              setRadius(value)
-              // Nach einer Suche lädt der neue Umkreis direkt neu
-              if (status !== 'idle') void search(value)
-            }}
-            aria-label="Suchradius"
+            value={filters.maxFlightHours === null ? '' : String(filters.maxFlightHours)}
+            onChange={(e) =>
+              onMaxFlightHoursChange(e.target.value === '' ? null : Number(e.target.value))
+            }
+            aria-label="Maximale Flugzeit"
             className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-700 outline-none focus:border-sky-500"
           >
-            {RADIUS_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                Umkreis {option.label}
+            <option value="">Max. Flugzeit: egal</option>
+            {FLIGHT_HOUR_OPTIONS.map((hours) => (
+              <option key={hours} value={hours}>
+                Max. Flugzeit: {hours} Std.
               </option>
             ))}
           </select>
@@ -272,7 +290,12 @@ export function LiveSearch({
               {filteredHotels.length !== hotels.length && (
                 <span className="text-slate-400"> von {hotels.length}</span>
               )}{' '}
-              Hotels bei {place.name} <span className="text-slate-400">(Quelle: OpenStreetMap)</span>
+              Hotels bei {place.name}{' '}
+              <span className="text-slate-400">
+                (Umkreis {usedRadius / 1000} km
+                {usedRadius === EXTENDED_RADIUS && ', automatisch erweitert'} · Quelle:
+                OpenStreetMap)
+              </span>
               {flightHours !== null && (
                 <span className="mt-1 block text-xs font-normal text-sky-700 sm:mt-0 sm:ml-2 sm:inline">
                   ✈️ {formatFlightHours(flightHours)} ab {airportLabel(from)}
@@ -313,7 +336,7 @@ export function LiveSearch({
           {filteredHotels.length === 0 ? (
             <p className="mt-4 text-sm text-slate-500">
               {hotels.length === 0
-                ? 'In diesem Umkreis sind keine Hotels in OpenStreetMap erfasst – Radius vergrößern oder anderen Ort probieren.'
+                ? 'Rund um dieses Ziel sind keine Hotels in OpenStreetMap erfasst (auch nicht im erweiterten 40-km-Umkreis) – bitte anderen Ort probieren.'
                 : 'Kein Hotel erfüllt die aktiven Filter (Sterne/Strandnähe) – Filter links lockern oder Hotels ohne Sterne-Angabe einbeziehen.'}
             </p>
           ) : (
@@ -402,8 +425,8 @@ export function LiveSearch({
               </ul>
               {filteredHotels.length > MAX_SHOWN && (
                 <p className="mt-3 text-center text-xs text-slate-400">
-                  … und {filteredHotels.length - MAX_SHOWN} weitere. Verkleinere den Radius, um
-                  gezielter zu suchen.
+                  … und {filteredHotels.length - MAX_SHOWN} weitere. Nutze die Filter links, um die
+                  Auswahl einzugrenzen.
                 </p>
               )}
             </>
