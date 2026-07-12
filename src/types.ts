@@ -1,0 +1,81 @@
+/** Art der Reise, die gesucht wird. */
+export type TravelType = 'package' | 'hotel' | 'flight'
+
+/** Bewertbare Standort- und Erlebnis-Kriterien (Skala 0–10). */
+export type ScoreKey =
+  | 'entertainment' // Unterhaltung / Animation / Nachtleben
+  | 'beach' // Strandqualität
+  | 'mountains' // Berge / Natur / Wandern
+  | 'excursions' // Ausflugsmöglichkeiten
+  | 'shopping' // Einkaufsmöglichkeiten
+  | 'food' // Essensqualität
+  | 'relaxation' // Erholungsfaktor
+
+export interface Offer {
+  id: string
+  /** Hotelname */
+  name: string
+  /** Ort, z. B. "Playa de Palma" */
+  destination: string
+  /** Land / Region, z. B. "Spanien · Mallorca" */
+  region: string
+  travelTypes: TravelType[]
+  /** Preis pro Person in Euro (Paket bzw. günstigste Option) */
+  pricePerPerson: number
+  /** Hotelkategorie 1–5 Sterne */
+  hotelStars: number
+  /** Gästebewertung 0–10 */
+  rating: number
+  reviewCount: number
+  /** Entfernung zum Strand in Metern, null = kein Strand in der Nähe */
+  beachDistanceM: number | null
+  familyHotel: boolean
+  /** Flugzeit ab Deutschland in Stunden */
+  flightHours: number
+  /** Darf Toilettenpapier in die Toilette geworfen werden? */
+  paperInToilet: boolean
+  /** Durchschnittliche Sonnenstunden pro Tag in der Saison */
+  sunHoursPerDay: number
+  scores: Record<ScoreKey, number>
+  amenities: {
+    pool: boolean
+    whirlpool: boolean
+    spa: boolean
+    parking: boolean
+  }
+  /** Mögliche Abflughäfen (IATA-Codes) */
+  departureAirports: string[]
+  /** Verpflegung, z. B. "All Inclusive" */
+  board: string
+  /** Tailwind-Gradient für das Kartenbild */
+  gradient: string
+  /** Symbol für das Reiseziel */
+  emoji: string
+}
+
+/** Mindest-Anspruch an ein Score-Kriterium. */
+export type ScoreLevel = 'any' | 'good' | 'excellent'
+
+export interface Filters {
+  travelType: TravelType | 'all'
+  query: string
+  maxPrice: number
+  minStars: number
+  minRating: number
+  /** null = egal */
+  maxFlightHours: number | null
+  /** null = egal */
+  maxBeachDistance: number | null
+  familyOnly: boolean
+  paperInToilet: boolean
+  pool: boolean
+  whirlpool: boolean
+  spa: boolean
+  parking: boolean
+  /** leer = alle Abflughäfen */
+  airports: string[]
+  minSunHours: number
+  scoreLevels: Record<ScoreKey, ScoreLevel>
+}
+
+export type SortKey = 'recommended' | 'priceAsc' | 'priceDesc' | 'rating' | 'stars'
