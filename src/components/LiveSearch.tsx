@@ -30,11 +30,14 @@ function StarsInline({ stars }: { stars: number }) {
   return <span className="text-amber-400">{'★'.repeat(Math.round(stars))}</span>
 }
 
+const FLIGHT_HOUR_OPTIONS = [2, 3, 4, 5, 6, 8, 10, 12]
+
 export function LiveSearch({
   trip,
   minStars,
   maxFlightHours,
   onMinStarsChange,
+  onMaxFlightHoursChange,
   preferredAirport,
 }: {
   trip: TripParams
@@ -42,6 +45,7 @@ export function LiveSearch({
   /** Max. Flugzeit aus den Filtern, null = egal */
   maxFlightHours: number | null
   onMinStarsChange: (stars: number) => void
+  onMaxFlightHoursChange: (hours: number | null) => void
   preferredAirport?: string
 }) {
   const [query, setQuery] = useState('')
@@ -58,7 +62,10 @@ export function LiveSearch({
   const fromAirport = AIRPORTS.find((airport) => airport.code === from)
   const filteredHotels = filterByStars(hotels, minStars, includeUnrated)
 
-  const search = async (searchRadius: number = radius) => {
+  const search = async (
+    searchRadius: number = radius,
+    maxFlight: number | null = maxFlightHours,
+  ) => {
     if (!query.trim()) return
     abortRef.current?.abort()
     const controller = new AbortController()
@@ -89,7 +96,7 @@ export function LiveSearch({
         ? estimatedFlightHours(haversineKm(fromAirport.lat, fromAirport.lon, lat, lon))
         : null
       setFlightHours(estimated)
-      if (maxFlightHours !== null && estimated !== null && estimated > maxFlightHours) {
+      if (maxFlight !== null && estimated !== null && estimated > maxFlight) {
         setHotels([])
         setStatus('blocked')
         return
@@ -186,6 +193,65 @@ export function LiveSearch({
         </button>
       </form>
 
+      {/* Filter – immer sichtbar, wirken direkt auf die Live-Ergebnisse */}
+      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl bg-slate-50 px-3 py-2.5">
+        <span className="text-xs font-bold tracking-wide text-sky-900/60 uppercase">Filter</span>
+        <div className="flex items-center gap-1.5">
+          <span className="text-xs text-slate-600">Hotelkategorie:</span>
+          <div className="flex gap-1" role="radiogroup" aria-label="Mindest-Sterne (Live-Suche)">
+            {[0, 3, 4, 5].map((stars) => (
+              <button
+                key={stars}
+                type="button"
+                role="radio"
+                aria-checked={minStars === stars}
+                onClick={() => onMinStarsChange(stars)}
+                className={`rounded-lg border px-2.5 py-1 text-xs font-medium transition ${
+                  minStars === stars
+                    ? 'border-sky-600 bg-sky-50 text-sky-700'
+                    : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+                }`}
+              >
+                {stars === 0 ? 'Alle' : `${stars}★+`}
+              </button>
+            ))}
+          </div>
+        </div>
+        <label className="flex items-center gap-1.5 text-xs text-slate-600">
+          Max. Flugzeit ab {airportLabel(from)}:
+          <select
+            value={maxFlightHours === null ? '' : String(maxFlightHours)}
+            onChange={(e) => {
+              const value = e.target.value === '' ? null : Number(e.target.value)
+              onMaxFlightHoursChange(value)
+              if (status === 'blocked' || status === 'done') void search(radius, value)
+            }}
+            className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-700 outline-none focus:border-sky-500"
+          >
+            <option value="">Egal</option>
+            {FLIGHT_HOUR_OPTIONS.map((hours) => (
+              <option key={hours} value={hours}>
+                {hours} Std.
+              </option>
+            ))}
+          </select>
+        </label>
+        {minStars > 0 && (
+          <label className="flex cursor-pointer items-center gap-1.5 text-xs text-slate-600">
+            <input
+              type="checkbox"
+              checked={includeUnrated}
+              onChange={(e) => setIncludeUnrated(e.target.checked)}
+              className="size-3.5 rounded border-slate-300 accent-sky-600"
+            />
+            Hotels ohne Sterne-Angabe einbeziehen
+          </label>
+        )}
+        <span className="ml-auto text-[11px] text-slate-400">
+          Bewertung, Pool usw. sind in OpenStreetMap nicht erfasst
+        </span>
+      </div>
+
       {status === 'loading' && (
         <p className="mt-4 animate-pulse text-sm text-slate-500">
           Frage OpenStreetMap nach allen Hotels rund um „{query}“ …
@@ -210,53 +276,17 @@ export function LiveSearch({
 
       {status === 'done' && place && (
         <div className="mt-5">
-          <div className="mb-3 flex flex-wrap items-center gap-2 rounded-xl bg-slate-50 px-3 py-2">
-            <span className="text-xs font-semibold text-slate-500">Hotelkategorie:</span>
-            <div className="flex gap-1" role="radiogroup" aria-label="Mindest-Sterne (Live-Suche)">
-              {[0, 3, 4, 5].map((stars) => (
-                <button
-                  key={stars}
-                  type="button"
-                  role="radio"
-                  aria-checked={minStars === stars}
-                  onClick={() => onMinStarsChange(stars)}
-                  className={`rounded-lg border px-2.5 py-1 text-xs font-medium transition ${
-                    minStars === stars
-                      ? 'border-sky-600 bg-sky-50 text-sky-700'
-                      : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
-                  }`}
-                >
-                  {stars === 0 ? 'Alle' : `${stars}★+`}
-                </button>
-              ))}
-            </div>
-            {minStars > 0 && (
-              <label className="flex cursor-pointer items-center gap-1.5 text-xs text-slate-600">
-                <input
-                  type="checkbox"
-                  checked={includeUnrated}
-                  onChange={(e) => setIncludeUnrated(e.target.checked)}
-                  className="size-3.5 rounded border-slate-300 accent-sky-600"
-                />
-                Hotels ohne Sterne-Angabe einbeziehen
-              </label>
-            )}
-            {flightHours !== null && (
-              <span className="rounded-full bg-sky-100 px-2.5 py-1 text-xs font-medium text-sky-800">
-                ✈️ {formatFlightHours(flightHours)} ab {airportLabel(from)}
-                {maxFlightHours !== null && ` (Filter: max. ${maxFlightHours} Std. ✓)`}
-              </span>
-            )}
-            <span className="ml-auto text-[11px] text-slate-400">
-              Bewertung, Pool usw. sind in OpenStreetMap nicht erfasst
-            </span>
-          </div>
-
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h3 className="text-sm font-medium text-slate-600">
               <strong className="text-lg font-bold text-slate-900">{filteredHotels.length}</strong>
               {minStars > 0 && <span className="text-slate-400"> von {hotels.length}</span>} Hotels
               bei {place.name} <span className="text-slate-400">(Quelle: OpenStreetMap)</span>
+              {flightHours !== null && (
+                <span className="mt-1 block text-xs font-normal text-sky-700 sm:mt-0 sm:ml-2 sm:inline">
+                  ✈️ {formatFlightHours(flightHours)} ab {airportLabel(from)}
+                  {maxFlightHours !== null && ` (Filter: max. ${maxFlightHours} Std. ✓)`}
+                </span>
+              )}
             </h3>
             <a
               href={flightsSearchUrl(destinationLabel, from, trip)}

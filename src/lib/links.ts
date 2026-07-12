@@ -42,12 +42,19 @@ export function flightsSearchUrl(destination: string, from: string, trip?: TripP
 
 /**
  * Google-Flights-Suche zum Ziel-Flughafen eines Angebots, inkl. Hin- und
- * Rückflugdatum. null, wenn das Angebot keine Fluganreise hat.
+ * Rückflugdatum. Ist kein Reisedatum gewählt, wird der Termin des
+ * angezeigten Live-Preises verlinkt, damit Preis und Link zusammenpassen.
+ * null, wenn das Angebot keine Fluganreise hat.
  */
 export function flightsUrl(offer: Offer, from?: string, trip?: TripParams): string | null {
   if (!offer.destinationAirport) return null
   const departure = from && offer.departureAirports.includes(from) ? from : offer.departureAirports[0]
   if (!departure) return null
+  if (!trip?.departureDate && offer.livePriceInfo?.departureAt && offer.livePriceInfo.returnAt) {
+    let query = `Flights from ${departure} to ${offer.destinationAirport}`
+    query += ` on ${offer.livePriceInfo.departureAt} through ${offer.livePriceInfo.returnAt}`
+    return `https://www.google.com/travel/flights?q=${encodeURIComponent(query)}`
+  }
   return flightsSearchUrl(offer.destinationAirport, departure, trip)
 }
 

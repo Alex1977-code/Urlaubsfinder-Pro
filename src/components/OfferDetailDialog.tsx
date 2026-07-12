@@ -5,7 +5,13 @@ import { SCORE_KEYS, SCORE_LABELS } from '../lib/filter'
 import { photoPageUrl } from '../lib/images'
 import { bookingUrl, flightsUrl, mapsUrl } from '../lib/links'
 import { OfferPhoto } from './OfferPhoto'
-import { formatBeachDistance, formatFlightHours, formatPrice, ratingWord } from '../lib/format'
+import {
+  formatBeachDistance,
+  formatFlightHours,
+  formatPrice,
+  formatShortDate,
+  ratingWord,
+} from '../lib/format'
 import { priceBreakdown, tripSummary } from '../lib/trip'
 import { Badge, ScoreBar, Stars } from './ui'
 
@@ -125,7 +131,15 @@ export function OfferDetailDialog({
                     )}
                     {breakdown.flight > 0 && (
                       <div className="flex justify-between">
-                        <dt>✈️ Flug (hin & zurück{offer.livePrice ? ', live' : ''})</dt>
+                        <dt>
+                          ✈️ Flug (hin & zurück
+                          {offer.livePrice ? ', live' : ''}
+                          {!trip.departureDate &&
+                            offer.livePriceInfo?.departureAt &&
+                            offer.livePriceInfo.returnAt &&
+                            ` · günstigster Termin ${formatShortDate(offer.livePriceInfo.departureAt)}–${formatShortDate(offer.livePriceInfo.returnAt)}`}
+                          )
+                        </dt>
                         <dd className="font-medium">{formatPrice(breakdown.flight)}</dd>
                       </div>
                     )}

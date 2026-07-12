@@ -22,6 +22,14 @@ export function formatBeachDistance(meters: number | null): string {
   return `${(meters / 1000).toLocaleString('de-DE', { maximumFractionDigits: 1 })} km zum Strand`
 }
 
+/** ISO-Datum kompakt als "12.08." formatieren. */
+export function formatShortDate(isoDate: string): string {
+  return new Date(`${isoDate}T12:00:00Z`).toLocaleDateString('de-DE', {
+    day: '2-digit',
+    month: '2-digit',
+  })
+}
+
 export function ratingWord(rating: number): string {
   if (rating >= 9) return 'Ausgezeichnet'
   if (rating >= 8.5) return 'Hervorragend'

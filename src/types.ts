@@ -26,6 +26,12 @@ export interface Offer {
   flightPricePerPerson: number | null
   /** true, wenn der Flugpreis live von der Preis-API stammt */
   livePrice?: boolean
+  /** Termin, für den der Live-Flugpreis gefunden wurde */
+  livePriceInfo?: {
+    month: string | null
+    departureAt: string | null
+    returnAt: string | null
+  }
   /** Hotelkategorie 1–5 Sterne */
   hotelStars: number
   /** Gästebewertung 0–10 */

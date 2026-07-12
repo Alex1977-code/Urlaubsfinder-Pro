@@ -68,6 +68,19 @@ describe('flightsUrl', () => {
     const url = flightsUrl(offer, 'FRA', trip)
     expect(decodeURIComponent(url!)).toContain('on 2026-08-15 through 2026-08-22')
   })
+
+  it('verlinkt ohne Reisedatum den Termin des Live-Preises', () => {
+    const liveOffer = {
+      ...offer,
+      livePrice: true,
+      livePriceInfo: { month: '2026-09', departureAt: '2026-09-12', returnAt: '2026-09-19' },
+    }
+    const url = flightsUrl(liveOffer, 'FRA', { ...trip, departureDate: null })
+    expect(decodeURIComponent(url!)).toContain('on 2026-09-12 through 2026-09-19')
+    // Gewähltes Reisedatum hat Vorrang vor dem Live-Termin
+    const withDate = flightsUrl(liveOffer, 'FRA', trip)
+    expect(decodeURIComponent(withDate!)).toContain('on 2026-08-15 through 2026-08-22')
+  })
 })
 
 describe('generische Suchlinks (Live-Suche)', () => {

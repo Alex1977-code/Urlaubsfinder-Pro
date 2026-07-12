@@ -32,7 +32,12 @@ export default function App() {
     void fetchLivePrices().then(setLivePrices)
   }, [])
 
-  const offers = useMemo(() => applyLivePrices(OFFERS, livePrices), [livePrices])
+  // Live-Preis passend zum gewählten Reisemonat auswählen
+  const departureMonth = trip.departureDate ? trip.departureDate.slice(0, 7) : null
+  const offers = useMemo(
+    () => applyLivePrices(OFFERS, livePrices, departureMonth),
+    [livePrices, departureMonth],
+  )
   const results = useMemo(() => applyFilters(offers, filters, sort), [offers, filters, sort])
 
   // Bei "Nur Hotel" spielt Gepäck keine Rolle – nicht in Preis und Anzeige aufnehmen.
@@ -114,6 +119,7 @@ export default function App() {
               minStars={filters.minStars}
               maxFlightHours={filters.maxFlightHours}
               onMinStarsChange={(minStars) => setFilters({ ...filters, minStars })}
+              onMaxFlightHoursChange={(maxFlightHours) => setFilters({ ...filters, maxFlightHours })}
               preferredAirport={filters.airports[0]}
             />
           </div>
