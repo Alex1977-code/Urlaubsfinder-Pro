@@ -45,6 +45,8 @@ export interface Offer {
   }
   /** Mögliche Abflughäfen (IATA-Codes) */
   departureAirports: string[]
+  /** Ziel-Flughafen (IATA), null wenn keine Fluganreise */
+  destinationAirport: string | null
   /** Verpflegung, z. B. "All Inclusive" */
   board: string
   /** Tailwind-Gradient für das Kartenbild */

@@ -36,6 +36,7 @@ const baseOffer: Offer = {
   },
   amenities: { pool: true, whirlpool: false, spa: true, parking: true },
   departureAirports: ['FRA', 'MUC'],
+  destinationAirport: 'PMI',
   board: 'All Inclusive',
   gradient: '',
   emoji: '🧪',

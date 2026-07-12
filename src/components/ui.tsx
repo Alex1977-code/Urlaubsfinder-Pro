@@ -2,11 +2,15 @@ import type { ReactNode } from 'react'
 import type { ScoreLevel } from '../types'
 
 export function FilterSection({ title, children }: { title: string; children: ReactNode }) {
+  // Trennlinie ÜBER der Überschrift und enger Abstand zum Regler darunter,
+  // damit Überschrift und zugehörige Bedienelemente klar zusammengehören.
   return (
-    <fieldset className="border-b border-slate-200 py-4 first:pt-0 last:border-b-0">
-      <legend className="mb-2.5 text-sm font-semibold text-slate-800">{title}</legend>
+    <section className="mt-4 border-t border-slate-200 pt-4 first:mt-0 first:border-t-0 first:pt-0">
+      <h3 className="mb-2 text-[11px] font-bold tracking-[0.08em] text-sky-900/60 uppercase">
+        {title}
+      </h3>
       {children}
-    </fieldset>
+    </section>
   )
 }
 
@@ -127,6 +131,21 @@ export function Badge({ children, tone = 'slate' }: { children: ReactNode; tone?
     <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${tones[tone]}`}>
       {children}
     </span>
+  )
+}
+
+export function ScoreBar({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="flex items-center gap-2 text-xs">
+      <span className="w-24 shrink-0 text-slate-500">{label}</span>
+      <div className="h-1.5 flex-1 rounded-full bg-slate-100">
+        <div
+          className="h-1.5 rounded-full bg-gradient-to-r from-sky-500 to-cyan-400"
+          style={{ width: `${value * 10}%` }}
+        />
+      </div>
+      <span className="w-6 text-right font-medium text-slate-700">{value}</span>
+    </div>
   )
 }
 

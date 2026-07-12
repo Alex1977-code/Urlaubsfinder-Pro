@@ -1,10 +1,11 @@
-import { useMemo, useState } from 'react'
-import type { Filters, SortKey } from './types'
+import { useMemo, useRef, useState } from 'react'
+import type { Filters, Offer, SortKey } from './types'
 import { OFFERS } from './data/offers'
 import { DEFAULT_FILTERS, applyFilters } from './lib/filter'
 import { SearchBar } from './components/SearchBar'
 import { FilterSidebar } from './components/FilterSidebar'
 import { OfferCard } from './components/OfferCard'
+import { OfferDetailDialog } from './components/OfferDetailDialog'
 
 const SORT_OPTIONS: { value: SortKey; label: string }[] = [
   { value: 'recommended', label: 'Unsere Empfehlung' },
@@ -18,8 +19,15 @@ export default function App() {
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS)
   const [sort, setSort] = useState<SortKey>('recommended')
   const [filtersOpen, setFiltersOpen] = useState(false)
+  const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null)
+  const resultsRef = useRef<HTMLElement>(null)
 
   const results = useMemo(() => applyFilters(OFFERS, filters, sort), [filters, sort])
+
+  // "Suchen" springt zur Ergebnisliste – auch ohne eingegebenes Reiseziel.
+  const handleSearch = () => {
+    resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   return (
     <div className="min-h-screen">
@@ -51,6 +59,7 @@ export default function App() {
           onTravelTypeChange={(travelType) => setFilters({ ...filters, travelType })}
           query={filters.query}
           onQueryChange={(query) => setFilters({ ...filters, query })}
+          onSearch={handleSearch}
         />
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[300px_1fr]">
@@ -69,7 +78,7 @@ export default function App() {
             </div>
           </aside>
 
-          <section aria-label="Suchergebnisse">
+          <section aria-label="Suchergebnisse" ref={resultsRef} className="scroll-mt-4">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <h2 className="text-sm font-medium text-slate-600">
                 <strong className="text-lg font-bold text-slate-900">{results.length}</strong>{' '}
@@ -94,7 +103,7 @@ export default function App() {
             {results.length > 0 ? (
               <div className="flex flex-col gap-4">
                 {results.map((offer) => (
-                  <OfferCard key={offer.id} offer={offer} />
+                  <OfferCard key={offer.id} offer={offer} onSelect={setSelectedOffer} />
                 ))}
               </div>
             ) : (
@@ -118,6 +127,12 @@ export default function App() {
           </section>
         </div>
       </main>
+
+      <OfferDetailDialog
+        offer={selectedOffer}
+        preferredAirport={filters.airports[0]}
+        onClose={() => setSelectedOffer(null)}
+      />
 
       <footer className="border-t border-slate-200 bg-white py-6">
         <div className="mx-auto max-w-6xl px-4 text-center text-xs text-slate-400 sm:px-6">

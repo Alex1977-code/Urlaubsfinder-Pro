@@ -12,11 +12,13 @@ export function SearchBar({
   onTravelTypeChange,
   query,
   onQueryChange,
+  onSearch,
 }: {
   travelType: TravelType | 'all'
   onTravelTypeChange: (type: TravelType | 'all') => void
   query: string
   onQueryChange: (query: string) => void
+  onSearch: () => void
 }) {
   return (
     <div className="rounded-2xl bg-white p-3 shadow-xl ring-1 ring-slate-900/5 sm:p-4">
@@ -40,7 +42,13 @@ export function SearchBar({
         ))}
       </div>
 
-      <div className="flex flex-col gap-2 sm:flex-row">
+      <form
+        className="flex flex-col gap-2 sm:flex-row"
+        onSubmit={(e) => {
+          e.preventDefault()
+          onSearch()
+        }}
+      >
         <div className="relative flex-1">
           <span
             aria-hidden="true"
@@ -52,18 +60,18 @@ export function SearchBar({
             type="search"
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
-            placeholder="Reiseziel, Region oder Hotelname – z. B. Mallorca"
-            aria-label="Reiseziel oder Hotelname"
+            placeholder="Reiseziel oder Hotel (optional) – z. B. Mallorca"
+            aria-label="Reiseziel oder Hotelname (optional)"
             className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pr-4 pl-10 text-sm outline-none focus:border-sky-500 focus:bg-white focus:ring-2 focus:ring-sky-200"
           />
         </div>
         <button
-          type="button"
+          type="submit"
           className="rounded-xl bg-gradient-to-r from-sky-600 to-cyan-500 px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-600/30 transition hover:from-sky-700 hover:to-cyan-600"
         >
           Suchen
         </button>
-      </div>
+      </form>
     </div>
   )
 }

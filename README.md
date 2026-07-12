@@ -34,7 +34,9 @@ Die Seite wird bei jedem Push automatisch per GitHub Actions gebaut und auf GitH
 | Sonnenfaktor | Mindest-Sonnenstunden pro Tag |
 | Abflughafen | Auswahl aus 10 deutschen Flughäfen |
 
-**Weitere Funktionen:** Volltextsuche (Ziel, Region, Hotelname), Sortierung (Empfehlung, Preis, Bewertung, Kategorie), aktive Filter zählen & zurücksetzen, responsives Design (Filter auf Mobilgeräten einklappbar), leerer Zustand mit Reset.
+**Weitere Funktionen:** Volltextsuche (Ziel, Region, Hotelname – optional, ohne Eingabe werden alle Angebote gezeigt), Sortierung (Empfehlung, Preis, Bewertung, Kategorie), aktive Filter zählen & zurücksetzen, responsives Design (Filter auf Mobilgeräten einklappbar), leerer Zustand mit Reset.
+
+**Detailansicht mit echten Angeboten:** „Zum Angebot“ öffnet eine Detailansicht mit allen Kriterien und Links zu tagesaktuellen, buchbaren Angeboten – Hotelpreise auf Booking.com, Flugsuche über Google Flights (berücksichtigt den gewählten Abflughafen) und Lage auf Google Maps. Die Hotels in den Beispieldaten sind echte Hotels.
 
 ## Tech-Stack
 
@@ -63,12 +65,14 @@ src/
 │   └── airports.ts       # Wählbare Abflughäfen
 ├── lib/
 │   ├── filter.ts         # Filter-Engine, Sortierung, Empfehlungs-Score
-│   ├── filter.test.ts    # Unit-Tests
-│   └── format.ts         # Formatierung (Preis, Flugzeit, Strandentfernung)
+│   ├── links.ts          # Links zu echten Angeboten (Booking.com, Google Flights)
+│   ├── format.ts         # Formatierung (Preis, Flugzeit, Strandentfernung)
+│   └── *.test.ts         # Unit-Tests
 ├── components/
 │   ├── SearchBar.tsx     # Reiseart + Volltextsuche
 │   ├── FilterSidebar.tsx # Alle Filterkriterien
 │   ├── OfferCard.tsx     # Ergebnis-Karte
+│   ├── OfferDetailDialog.tsx # Detailansicht mit Buchungslinks
 │   └── ui.tsx            # Wiederverwendbare Bausteine
 └── App.tsx               # Layout & State
 ```

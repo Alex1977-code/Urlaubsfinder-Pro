@@ -1,24 +1,9 @@
 import type { Offer } from '../types'
 import { airportLabel } from '../data/airports'
 import { formatBeachDistance, formatFlightHours, formatPrice, ratingWord } from '../lib/format'
-import { Badge, Stars } from './ui'
+import { Badge, ScoreBar, Stars } from './ui'
 
-function ScoreBar({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="flex items-center gap-2 text-xs">
-      <span className="w-24 shrink-0 text-slate-500">{label}</span>
-      <div className="h-1.5 flex-1 rounded-full bg-slate-100">
-        <div
-          className="h-1.5 rounded-full bg-gradient-to-r from-sky-500 to-cyan-400"
-          style={{ width: `${value * 10}%` }}
-        />
-      </div>
-      <span className="w-6 text-right font-medium text-slate-700">{value}</span>
-    </div>
-  )
-}
-
-export function OfferCard({ offer }: { offer: Offer }) {
+export function OfferCard({ offer, onSelect }: { offer: Offer; onSelect: (offer: Offer) => void }) {
   return (
     <article className="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-900/5 transition hover:shadow-lg">
       <div className="flex flex-col sm:flex-row">
@@ -95,6 +80,7 @@ export function OfferCard({ offer }: { offer: Offer }) {
               </div>
               <button
                 type="button"
+                onClick={() => onSelect(offer)}
                 className="rounded-xl bg-sky-600 px-5 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-sky-700"
               >
                 Zum Angebot
