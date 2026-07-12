@@ -113,7 +113,13 @@ export default function App() {
             {results.length > 0 ? (
               <div className="flex flex-col gap-4">
                 {results.map((offer) => (
-                  <OfferCard key={offer.id} offer={offer} trip={effectiveTrip} onSelect={setSelectedOffer} />
+                  <OfferCard
+                    key={offer.id}
+                    offer={offer}
+                    trip={effectiveTrip}
+                    travelType={filters.travelType}
+                    onSelect={setSelectedOffer}
+                  />
                 ))}
               </div>
             ) : (
@@ -141,6 +147,7 @@ export default function App() {
       <OfferDetailDialog
         offer={selectedOffer}
         trip={effectiveTrip}
+        travelType={filters.travelType}
         preferredAirport={filters.airports[0]}
         onClose={() => setSelectedOffer(null)}
       />

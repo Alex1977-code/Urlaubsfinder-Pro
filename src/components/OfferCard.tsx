@@ -1,19 +1,22 @@
-import type { Offer, TripParams } from '../types'
+import type { Offer, TravelType, TripParams } from '../types'
 import { airportLabel } from '../data/airports'
 import { formatBeachDistance, formatFlightHours, formatPrice, ratingWord } from '../lib/format'
-import { totalPrice, travellersLabel } from '../lib/trip'
+import { perPersonPrice, totalPrice, travellersLabel } from '../lib/trip'
 import { Badge, ScoreBar, Stars } from './ui'
 import { OfferPhoto } from './OfferPhoto'
 
 export function OfferCard({
   offer,
   trip,
+  travelType,
   onSelect,
 }: {
   offer: Offer
   trip: TripParams
+  travelType: TravelType | 'all'
   onSelect: (offer: Offer) => void
 }) {
+  const flightIncluded = travelType !== 'hotel' && offer.flightPricePerPerson !== null
   return (
     <article className="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-900/5 transition hover:shadow-lg">
       <div className="flex flex-col sm:flex-row">
@@ -80,12 +83,22 @@ export function OfferCard({
             <div className="flex items-center gap-4">
               <div className="text-right">
                 <p className="text-xs text-slate-400">p. P. ab</p>
-                <p className="text-2xl font-extrabold text-slate-900">{formatPrice(offer.pricePerPerson)}</p>
+                <p className="text-2xl font-extrabold text-slate-900">
+                  {formatPrice(perPersonPrice(offer, travelType))}
+                </p>
+                {flightIncluded && travelType !== 'flight' && (
+                  <p className="text-[11px] text-slate-400">
+                    Hotel {formatPrice(offer.hotelPricePerPerson)} + Flug{' '}
+                    {formatPrice(offer.flightPricePerPerson!)}
+                  </p>
+                )}
                 <p className="text-xs text-slate-500">
-                  gesamt ab {formatPrice(totalPrice(offer, trip))}
+                  gesamt ab {formatPrice(totalPrice(offer, trip, travelType))}
                   <span className="text-slate-400">
                     {' '}
-                    · {travellersLabel(trip)} · {trip.nights} Nächte
+                    · {travellersLabel(trip)}
+                    {travelType !== 'flight' && <> · {trip.nights} Nächte</>}
+                    {flightIncluded && (trip.baggage ? ' · inkl. Flug & Gepäck' : ' · inkl. Flug (Handgepäck)')}
                   </span>
                 </p>
               </div>

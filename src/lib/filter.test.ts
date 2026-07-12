@@ -8,6 +8,7 @@ import {
   matchesFilters,
   sortOffers,
 } from './filter'
+import { perPersonPrice } from './trip'
 import { OFFERS } from '../data/offers'
 
 const baseOffer: Offer = {
@@ -16,7 +17,8 @@ const baseOffer: Offer = {
   destination: 'Teststrand',
   region: 'Testland · Küste',
   travelTypes: ['package', 'hotel'],
-  pricePerPerson: 800,
+  hotelPricePerPerson: 620,
+  flightPricePerPerson: 180,
   hotelStars: 4,
   rating: 8.5,
   reviewCount: 100,
@@ -58,10 +60,13 @@ describe('matchesFilters', () => {
     expect(matchesFilters(baseOffer, filters({ travelType: 'all' }))).toBe(true)
   })
 
-  it('filtert nach maximalem Preis, Preis-Obergrenze bedeutet egal', () => {
+  it('filtert nach maximalem Preis je Reiseart, Preis-Obergrenze bedeutet egal', () => {
+    // Pauschalreise: Hotel 620 + Flug 180 = 800
     expect(matchesFilters(baseOffer, filters({ maxPrice: 700 }))).toBe(false)
     expect(matchesFilters(baseOffer, filters({ maxPrice: 800 }))).toBe(true)
-    expect(matchesFilters({ ...baseOffer, pricePerPerson: 99999 }, filters({ maxPrice: PRICE_CAP }))).toBe(true)
+    // Nur Hotel: 620 liegt unter 700
+    expect(matchesFilters(baseOffer, filters({ travelType: 'hotel', maxPrice: 700 }))).toBe(true)
+    expect(matchesFilters({ ...baseOffer, hotelPricePerPerson: 99999 }, filters({ maxPrice: PRICE_CAP }))).toBe(true)
   })
 
   it('filtert nach Sternen und Bewertung', () => {
@@ -122,8 +127,8 @@ describe('matchesFilters', () => {
 })
 
 describe('sortOffers', () => {
-  const cheap = { ...baseOffer, id: 'cheap', pricePerPerson: 400, rating: 7.5, hotelStars: 3 }
-  const pricey = { ...baseOffer, id: 'pricey', pricePerPerson: 1500, rating: 9.5, hotelStars: 5 }
+  const cheap = { ...baseOffer, id: 'cheap', hotelPricePerPerson: 220, rating: 7.5, hotelStars: 3 }
+  const pricey = { ...baseOffer, id: 'pricey', hotelPricePerPerson: 1320, rating: 9.5, hotelStars: 5 }
 
   it('sortiert nach Preis auf- und absteigend', () => {
     expect(sortOffers([pricey, cheap], 'priceAsc', filters()).map((o) => o.id)).toEqual(['cheap', 'pricey'])
@@ -161,7 +166,7 @@ describe('applyFilters mit echten Beispieldaten', () => {
     )
     expect(result.length).toBeGreaterThan(0)
     for (const offer of result) {
-      expect(offer.pricePerPerson).toBeLessThanOrEqual(900)
+      expect(perPersonPrice(offer, 'package')).toBeLessThanOrEqual(900)
       expect(offer.hotelStars).toBeGreaterThanOrEqual(4)
       expect(offer.familyHotel).toBe(true)
       expect(offer.beachDistanceM).not.toBeNull()
@@ -169,7 +174,7 @@ describe('applyFilters mit echten Beispieldaten', () => {
       expect(offer.flightHours).toBeLessThanOrEqual(5)
     }
     // aufsteigend sortiert
-    const prices = result.map((o) => o.pricePerPerson)
+    const prices = result.map((o) => perPersonPrice(o, 'package'))
     expect(prices).toEqual([...prices].sort((a, b) => a - b))
   })
 

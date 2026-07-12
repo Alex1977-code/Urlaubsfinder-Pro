@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import type { Offer, TripParams } from '../types'
+import type { Offer, TravelType, TripParams } from '../types'
 import { airportLabel } from '../data/airports'
 import { SCORE_KEYS, SCORE_LABELS } from '../lib/filter'
 import { photoPageUrl } from '../lib/images'
@@ -21,11 +21,13 @@ function Fact({ label, value }: { label: string; value: string }) {
 export function OfferDetailDialog({
   offer,
   trip,
+  travelType,
   preferredAirport,
   onClose,
 }: {
   offer: Offer | null
   trip: TripParams
+  travelType: TravelType | 'all'
   preferredAirport?: string
   onClose: () => void
 }) {
@@ -90,15 +92,24 @@ export function OfferDetailDialog({
               <Fact label="Sonne" value={`${offer.sunHoursPerDay} Std./Tag`} />
               <Fact label="Verpflegung" value={offer.board} />
               <Fact label="WC-Regel" value={offer.paperInToilet ? 'Papier in Toilette OK' : 'Papier in den Eimer'} />
-              <Fact label="Preis p. P." value={`ab ${formatPrice(offer.pricePerPerson)}`} />
+              <Fact label="Hotel p. P./Woche" value={`ab ${formatPrice(offer.hotelPricePerPerson)}`} />
+              <Fact
+                label="Flug p. P."
+                value={
+                  offer.flightPricePerPerson !== null
+                    ? `ab ${formatPrice(offer.flightPricePerPerson)}`
+                    : 'Ohne Flug'
+                }
+              />
             </dl>
 
             <div className="rounded-lg bg-sky-50 px-3 py-2 text-sm text-sky-900">
               <span className="font-semibold">
-                Gesamt ab {formatPrice(totalPrice(offer, trip))}
+                Gesamt ab {formatPrice(totalPrice(offer, trip, travelType))}
               </span>{' '}
               <span className="text-sky-700">
-                – {tripSummary(trip, offer.destinationAirport !== null)}
+                – {tripSummary(trip, travelType !== 'hotel' && offer.destinationAirport !== null)}
+                {travelType !== 'hotel' && offer.flightPricePerPerson !== null && ' · inkl. Flug'}
               </span>
             </div>
 

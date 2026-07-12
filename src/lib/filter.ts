@@ -1,4 +1,5 @@
 import type { Filters, Offer, ScoreKey, ScoreLevel, SortKey } from '../types'
+import { perPersonPrice } from './trip'
 
 export const SCORE_LABELS: Record<ScoreKey, string> = {
   entertainment: 'Unterhaltung',
@@ -58,7 +59,7 @@ function matchesQuery(offer: Offer, query: string): boolean {
 export function matchesFilters(offer: Offer, f: Filters): boolean {
   if (f.travelType !== 'all' && !offer.travelTypes.includes(f.travelType)) return false
   if (!matchesQuery(offer, f.query)) return false
-  if (f.maxPrice < PRICE_CAP && offer.pricePerPerson > f.maxPrice) return false
+  if (f.maxPrice < PRICE_CAP && perPersonPrice(offer, f.travelType) > f.maxPrice) return false
   if (offer.hotelStars < f.minStars) return false
   if (offer.rating < f.minRating) return false
   if (f.maxFlightHours !== null && offer.flightHours > f.maxFlightHours) return false
@@ -97,18 +98,19 @@ export function recommendationScore(offer: Offer, f: Filters): number {
     score += avg * 6
   }
 
-  score -= offer.pricePerPerson / 100
+  score -= perPersonPrice(offer, f.travelType) / 100
   return score
 }
 
 export function sortOffers(offers: Offer[], sort: SortKey, f: Filters): Offer[] {
   const sorted = [...offers]
+  const price = (offer: Offer) => perPersonPrice(offer, f.travelType)
   switch (sort) {
     case 'priceAsc':
-      sorted.sort((a, b) => a.pricePerPerson - b.pricePerPerson)
+      sorted.sort((a, b) => price(a) - price(b))
       break
     case 'priceDesc':
-      sorted.sort((a, b) => b.pricePerPerson - a.pricePerPerson)
+      sorted.sort((a, b) => price(b) - price(a))
       break
     case 'rating':
       sorted.sort((a, b) => b.rating - a.rating)

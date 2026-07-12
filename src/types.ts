@@ -20,8 +20,10 @@ export interface Offer {
   /** Land / Region, z. B. "Spanien · Mallorca" */
   region: string
   travelTypes: TravelType[]
-  /** Preis pro Person in Euro (Paket bzw. günstigste Option) */
-  pricePerPerson: number
+  /** Hotelpreis pro Person und Woche in Euro */
+  hotelPricePerPerson: number
+  /** Flugpreis pro Person (hin & zurück), null = keine Fluganreise */
+  flightPricePerPerson: number | null
   /** Hotelkategorie 1–5 Sterne */
   hotelStars: number
   /** Gästebewertung 0–10 */

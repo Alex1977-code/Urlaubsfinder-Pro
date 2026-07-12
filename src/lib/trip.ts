@@ -1,4 +1,4 @@
-import type { Flexibility, Offer, TripParams } from '../types'
+import type { Flexibility, Offer, TravelType, TripParams } from '../types'
 
 export const DEFAULT_TRIP: TripParams = {
   departureDate: null,
@@ -44,14 +44,29 @@ export function payingTravellers(trip: TripParams): number {
 }
 
 /**
- * Gesamtpreis-Richtwert: Basispreis gilt pro Person für eine Woche und wird
- * auf Reisedauer und Reisende hochgerechnet; Gepäck nur bei Fluganreise.
+ * Preis pro Person je nach Reiseart: Pauschalreise = Hotel + Flug,
+ * "Nur Hotel" ohne Flug, "Nur Flug" nur der Flugpreis.
  */
-export function totalPrice(offer: Offer, trip: TripParams): number {
-  const base = offer.pricePerPerson * (trip.nights / 7) * personFactor(trip)
-  const baggage =
-    trip.baggage && offer.destinationAirport ? BAGGAGE_FEE * payingTravellers(trip) : 0
-  return Math.round(base + baggage)
+export function perPersonPrice(offer: Offer, travelType: TravelType | 'all'): number {
+  const flight = offer.flightPricePerPerson ?? 0
+  if (travelType === 'hotel') return offer.hotelPricePerPerson
+  if (travelType === 'flight') return flight
+  return offer.hotelPricePerPerson + flight
+}
+
+/**
+ * Gesamtpreis-Richtwert: Der Hotelanteil (Preis pro Person und Woche) wird
+ * auf Reisedauer und Reisende hochgerechnet, der Fluganteil fällt pro Person
+ * einmalig an und Gepäck nur bei Fluganreise.
+ */
+export function totalPrice(offer: Offer, trip: TripParams, travelType: TravelType | 'all'): number {
+  const factor = personFactor(trip)
+  const hotelPart =
+    travelType === 'flight' ? 0 : offer.hotelPricePerPerson * (trip.nights / 7) * factor
+  const flightIncluded = travelType !== 'hotel' && offer.flightPricePerPerson !== null
+  const flightPart = flightIncluded ? offer.flightPricePerPerson! * factor : 0
+  const baggage = flightIncluded && trip.baggage ? BAGGAGE_FEE * payingTravellers(trip) : 0
+  return Math.round(hotelPart + flightPart + baggage)
 }
 
 /** ISO-Datum um n Tage verschieben. */

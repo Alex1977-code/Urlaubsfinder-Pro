@@ -5,6 +5,7 @@ import {
   DEFAULT_TRIP,
   addDays,
   payingTravellers,
+  perPersonPrice,
   personFactor,
   returnDate,
   totalPrice,
@@ -13,7 +14,7 @@ import {
 } from './trip'
 import { OFFERS } from '../data/offers'
 
-const flugHotel = OFFERS.find((o) => o.id === 'mallorca-playa-esperanza')! // 789 €, PMI
+const flugHotel = OFFERS.find((o) => o.id === 'mallorca-playa-esperanza')! // Hotel 620 € + Flug 169 €
 const bergHotel = OFFERS.find((o) => o.id === 'tirol-alpenresort')! // 990 €, kein Flug
 
 function trip(overrides: Partial<TripParams> = {}): TripParams {
@@ -33,20 +34,40 @@ describe('personFactor', () => {
   })
 })
 
+describe('perPersonPrice', () => {
+  it('rechnet je Reiseart: Paket = Hotel + Flug, sonst nur der jeweilige Anteil', () => {
+    expect(perPersonPrice(flugHotel, 'package')).toBe(789)
+    expect(perPersonPrice(flugHotel, 'all')).toBe(789)
+    expect(perPersonPrice(flugHotel, 'hotel')).toBe(620)
+    expect(perPersonPrice(flugHotel, 'flight')).toBe(169)
+    expect(perPersonPrice(bergHotel, 'hotel')).toBe(990)
+  })
+})
+
 describe('totalPrice', () => {
-  it('skaliert mit Reisedauer (Basispreis = 1 Woche)', () => {
-    const oneWeek = totalPrice(flugHotel, trip({ nights: 7, adults: 1, baggage: false }))
-    const twoWeeks = totalPrice(flugHotel, trip({ nights: 14, adults: 1, baggage: false }))
-    expect(oneWeek).toBe(789)
-    expect(twoWeeks).toBe(1578)
+  it('skaliert nur den Hotelanteil mit der Reisedauer, der Flug fällt einmalig an', () => {
+    const oneWeek = totalPrice(flugHotel, trip({ nights: 7, adults: 1, baggage: false }), 'package')
+    const twoWeeks = totalPrice(flugHotel, trip({ nights: 14, adults: 1, baggage: false }), 'package')
+    expect(oneWeek).toBe(620 + 169)
+    expect(twoWeeks).toBe(620 * 2 + 169)
+    // Nur Hotel: ohne Fluganteil
+    expect(totalPrice(flugHotel, trip({ nights: 7, adults: 1, baggage: false }), 'hotel')).toBe(620)
+    // Nur Flug: unabhängig von der Dauer
+    expect(totalPrice(flugHotel, trip({ nights: 14, adults: 1, baggage: false }), 'flight')).toBe(169)
   })
 
   it('addiert Gepäck nur bei Fluganreise und nur für Personen ab 2 Jahren', () => {
-    const ohne = totalPrice(flugHotel, trip({ adults: 2, childAges: [1], baggage: false }))
-    const mit = totalPrice(flugHotel, trip({ adults: 2, childAges: [1], baggage: true }))
+    const ohne = totalPrice(flugHotel, trip({ adults: 2, childAges: [1], baggage: false }), 'package')
+    const mit = totalPrice(flugHotel, trip({ adults: 2, childAges: [1], baggage: true }), 'package')
     expect(mit - ohne).toBe(BAGGAGE_FEE * 2)
     // Hotel ohne Flug: Gepäck ändert nichts
-    expect(totalPrice(bergHotel, trip({ baggage: true }))).toBe(totalPrice(bergHotel, trip({ baggage: false })))
+    expect(totalPrice(bergHotel, trip({ baggage: true }), 'package')).toBe(
+      totalPrice(bergHotel, trip({ baggage: false }), 'package'),
+    )
+    // Reiseart "Nur Hotel": Gepäck ändert nichts
+    expect(totalPrice(flugHotel, trip({ baggage: true }), 'hotel')).toBe(
+      totalPrice(flugHotel, trip({ baggage: false }), 'hotel'),
+    )
   })
 
   it('payingTravellers zählt alle außer Kleinkindern', () => {
