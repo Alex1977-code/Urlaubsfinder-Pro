@@ -127,6 +127,9 @@ export function sortOffers(offers: Offer[], sort: SortKey, f: Filters): Offer[] 
     case 'flightAsc':
       sorted.sort((a, b) => a.flightHours - b.flightHours || price(a) - price(b))
       break
+    case 'flightDesc':
+      sorted.sort((a, b) => b.flightHours - a.flightHours || price(a) - price(b))
+      break
     case 'recommended':
       sorted.sort((a, b) => recommendationScore(b, f) - recommendationScore(a, f))
       break

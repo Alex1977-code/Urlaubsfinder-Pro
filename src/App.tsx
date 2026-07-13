@@ -17,6 +17,7 @@ const SORT_OPTIONS: { value: SortKey; label: string }[] = [
   { value: 'rating', label: 'Beste Bewertung' },
   { value: 'stars', label: 'Hotelkategorie' },
   { value: 'flightAsc', label: 'Kürzeste Flugzeit' },
+  { value: 'flightDesc', label: 'Längste Flugzeit' },
 ]
 
 export default function App() {
@@ -240,7 +241,8 @@ export default function App() {
 
       <footer className="border-t border-slate-200 bg-white py-6">
         <div className="mx-auto max-w-6xl px-4 text-center text-xs text-slate-400 sm:px-6">
-          Urlaubsfinder Pro – Demo mit Beispieldaten. Preise pro Person, Verfügbarkeit nicht garantiert.
+          Urlaubsfinder Pro – Demo mit Beispieldaten und Live-Datenquellen. Alle Preise pro Person
+          und ohne Gewähr. Änderungen und Irrtümer vorbehalten.
         </div>
       </footer>
     </div>

@@ -48,13 +48,13 @@ export function FilterSidebar({
 
       {liveMode && (
         <p className="mb-3 rounded-lg bg-sky-50 px-2.5 py-2 text-xs text-sky-800">
-          In der Live-Suche wirken <strong>Hotelkategorie</strong>, <strong>max. Flugzeit</strong>,{' '}
-          <strong>Strandnähe</strong> und <strong>Abflughafen</strong>. Ausgegraute Filter brauchen
-          Bewertungs-/Preisdaten, die OpenStreetMap nicht enthält.
+          In der Live-Suche wirken <strong>Budget</strong>, <strong>Hotelkategorie</strong>,{' '}
+          <strong>max. Flugzeit</strong>, <strong>Strandnähe</strong> und{' '}
+          <strong>Abflughafen</strong>. Ausgegraute Filter brauchen Bewertungsdaten, die
+          OpenStreetMap nicht enthält.
         </p>
       )}
 
-      <div className={inactive} aria-disabled={liveMode}>
       <FilterSection title="Budget pro Person">
         <SliderRow
           label="Max. Preis"
@@ -66,7 +66,6 @@ export function FilterSidebar({
           onChange={(value) => set('maxPrice', value)}
         />
       </FilterSection>
-      </div>
 
       <FilterSection title="Hotelkategorie">
         <div className="flex gap-1.5" role="radiogroup" aria-label="Mindest-Sterne">
@@ -106,10 +105,14 @@ export function FilterSidebar({
       <FilterSection title="Max. Flugzeit">
         <SliderRow
           label="Höchstens"
-          valueLabel={filters.maxFlightHours === null ? 'Egal' : `${filters.maxFlightHours} Std.`}
-          min={1}
+          valueLabel={
+            filters.maxFlightHours === null
+              ? 'Egal'
+              : `${filters.maxFlightHours.toLocaleString('de-DE')} Std.`
+          }
+          min={0.5}
           max={13}
-          step={1}
+          step={0.5}
           value={filters.maxFlightHours ?? 13}
           onChange={(value) => set('maxFlightHours', value >= 13 ? null : value)}
         />

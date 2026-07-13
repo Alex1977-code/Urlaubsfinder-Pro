@@ -210,7 +210,7 @@ export function OfferDetailDialog({
               </a>
               <p className="text-center text-[11px] text-slate-400">
                 Links öffnen echte, tagesaktuelle Angebote in einem neuen Tab. Die Preise in dieser
-                Übersicht sind Richtwerte.
+                Übersicht sind Richtwerte – Änderungen und Irrtümer vorbehalten.
                 {photoPageUrl(offer) && (
                   <>
                     {' '}

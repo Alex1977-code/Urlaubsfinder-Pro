@@ -3,6 +3,7 @@ import type { Filters, Offer, TripParams } from '../types'
 import { AIRPORTS, airportLabel } from '../data/airports'
 import { DESTINATION_AIRPORTS } from '../data/destinationAirports'
 import { formatBeachDistance, formatFlightHours, formatPrice } from '../lib/format'
+import { PRICE_CAP } from '../lib/filter'
 import { bookingSearchUrl, flightsSearchUrl } from '../lib/links'
 import { BAGGAGE_FEE, payingTravellers, personFactor, travellersLabel } from '../lib/trip'
 import {
@@ -115,10 +116,11 @@ export function LiveSearch({
   }
 
   // Filter aus der Seitenleiste – wirken sofort, ohne neue Abfrage
+  // (Budget vergleicht gegen den angezeigten p.-P.-Preis inkl. Flug)
   const filteredHotels = filterByBeach(
     filterByStars(hotels, filters.minStars, includeUnrated),
     filters.maxBeachDistance,
-  )
+  ).filter((hotel) => filters.maxPrice >= PRICE_CAP || priceFor(hotel).perPerson <= filters.maxPrice)
 
   // Sortierung (Standard: Nähe zum Zentrum, wie von Overpass geliefert)
   const sortedHotels = [...filteredHotels].sort((a, b) => {
@@ -424,7 +426,7 @@ export function LiveSearch({
             <p className="mt-4 text-sm text-slate-500">
               {hotels.length === 0
                 ? 'Rund um dieses Ziel sind keine Hotels in OpenStreetMap erfasst (auch nicht im erweiterten 40-km-Umkreis) – bitte anderen Ort probieren.'
-                : 'Kein Hotel erfüllt die aktiven Filter (Sterne/Strandnähe) – Filter links lockern oder Hotels ohne Sterne-Angabe einbeziehen.'}
+                : 'Kein Hotel erfüllt die aktiven Filter (Budget/Sterne/Strandnähe) – Filter links lockern oder Hotels ohne Sterne-Angabe einbeziehen.'}
             </p>
           ) : (
             <>

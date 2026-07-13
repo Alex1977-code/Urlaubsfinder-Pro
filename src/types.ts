@@ -100,7 +100,14 @@ export interface Filters {
   scoreLevels: Record<ScoreKey, ScoreLevel>
 }
 
-export type SortKey = 'recommended' | 'priceAsc' | 'priceDesc' | 'rating' | 'stars' | 'flightAsc'
+export type SortKey =
+  | 'recommended'
+  | 'priceAsc'
+  | 'priceDesc'
+  | 'rating'
+  | 'stars'
+  | 'flightAsc'
+  | 'flightDesc'
 
 /** Flexibilität des Reisedatums („ungefähr“). */
 export type Flexibility = 'exact' | 'plus3' | 'plus7'
