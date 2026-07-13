@@ -38,7 +38,7 @@ export const DEFAULT_FILTERS: Filters = {
   whirlpool: false,
   spa: false,
   parking: false,
-  airports: [],
+  airports: ['FRA'],
   boards: [],
   minSunHours: 0,
   scoreLevels: {
@@ -77,8 +77,8 @@ export function matchesFilters(offer: Offer, f: Filters): boolean {
   if (f.whirlpool && !offer.amenities.whirlpool) return false
   if (f.spa && !offer.amenities.spa) return false
   if (f.parking && !offer.amenities.parking) return false
-  if (f.airports.length > 0) {
-    // Angebote ohne Anreiseflug (z. B. Auto-Anreise) bleiben bei Flughafen-Filter außen vor.
+  if (f.airports.length > 0 && offer.departureAirports.length > 0) {
+    // Angebote ohne Anreiseflug (Auto-Anreise) sind von jedem Flughafen aus "erreichbar".
     if (!offer.departureAirports.some((a) => f.airports.includes(a))) return false
   }
   if (f.boards.length > 0 && !f.boards.includes(offer.board)) return false
@@ -158,7 +158,8 @@ export function countActiveFilters(f: Filters): number {
   if (f.whirlpool) count++
   if (f.spa) count++
   if (f.parking) count++
-  if (f.airports.length > 0) count++
+  // Frankfurt ist der Standard-Abflughafen und zählt nicht als aktiver Filter
+  if (f.airports.length > 0 && !(f.airports.length === 1 && f.airports[0] === 'FRA')) count++
   if (f.boards.length > 0) count++
   if (f.minSunHours > 0) count++
   count += SCORE_KEYS.filter((key) => f.scoreLevels[key] !== 'any').length

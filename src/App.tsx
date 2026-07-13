@@ -27,6 +27,7 @@ export default function App() {
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null)
   const [view, setView] = useState<'catalog' | 'live'>('catalog')
   const [livePrices, setLivePrices] = useState(EMPTY_LIVE_PRICES)
+  const [liveTrigger, setLiveTrigger] = useState(0)
   const resultsRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
@@ -44,9 +45,14 @@ export default function App() {
   // Bei "Nur Hotel" spielt Gepäck keine Rolle – nicht in Preis und Anzeige aufnehmen.
   const effectiveTrip = filters.travelType === 'hotel' ? { ...trip, baggage: false } : trip
 
-  // "Suchen" springt zur Ergebnisliste – auch ohne eingegebenes Reiseziel.
+  // "Suchen" wirkt je nach Modus: Katalog filtert und springt zur Liste,
+  // Live-Suche startet die OpenStreetMap-Abfrage (leer = Entdecker-Modus).
   const handleSearch = () => {
-    resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    if (view === 'live') {
+      setLiveTrigger((t) => t + 1)
+    } else {
+      resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
   }
 
   return (
@@ -74,23 +80,7 @@ export default function App() {
       </header>
 
       <main className="mx-auto -mt-16 max-w-6xl px-4 pb-16 sm:px-6">
-        {view === 'catalog' && (
-          <SearchBar
-            travelType={filters.travelType}
-            onTravelTypeChange={(travelType) => setFilters({ ...filters, travelType })}
-            query={filters.query}
-            onQueryChange={(query) => setFilters({ ...filters, query })}
-            trip={trip}
-            onTripChange={setTrip}
-            onSearch={handleSearch}
-          />
-        )}
-
-        <div
-          role="tablist"
-          aria-label="Suchmodus"
-          className={`flex flex-wrap gap-1.5 ${view === 'catalog' ? 'mt-6' : ''}`}
-        >
+        <div role="tablist" aria-label="Suchmodus" className="mb-4 flex flex-wrap gap-1.5">
           <button
             type="button"
             role="tab"
@@ -115,6 +105,17 @@ export default function App() {
           </button>
         </div>
 
+        {/* Gemeinsame Suchmaske für beide Modi */}
+        <SearchBar
+          travelType={filters.travelType}
+          onTravelTypeChange={(travelType) => setFilters({ ...filters, travelType })}
+          query={filters.query}
+          onQueryChange={(query) => setFilters({ ...filters, query })}
+          trip={trip}
+          onTripChange={setTrip}
+          onSearch={handleSearch}
+        />
+
         {view === 'live' && (
           <div className="mt-4 grid gap-6 lg:grid-cols-[300px_1fr]">
             <aside>
@@ -133,10 +134,11 @@ export default function App() {
             <section aria-label="Live-Suche">
               <LiveSearch
                 trip={trip}
-                onTripChange={setTrip}
                 filters={filters}
-                onMaxFlightHoursChange={(maxFlightHours) => setFilters({ ...filters, maxFlightHours })}
                 offers={offers}
+                query={filters.query}
+                searchTrigger={liveTrigger}
+                onQueryChange={(query) => setFilters({ ...filters, query })}
               />
             </section>
           </div>

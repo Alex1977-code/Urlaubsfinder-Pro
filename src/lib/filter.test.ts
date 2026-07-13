@@ -121,6 +121,10 @@ describe('matchesFilters', () => {
     expect(matchesFilters(baseOffer, filters({ airports: ['MUC'] }))).toBe(true)
     expect(matchesFilters(baseOffer, filters({ airports: ['HAM'] }))).toBe(false)
     expect(matchesFilters(baseOffer, filters({ airports: [] }))).toBe(true)
+    // Hotels ohne Fluganreise (Auto) werden vom Flughafen-Filter nicht ausgeschlossen
+    expect(
+      matchesFilters({ ...baseOffer, departureAirports: [] }, filters({ airports: ['FRA'] })),
+    ).toBe(true)
   })
 
   it('filtert nach Sonnenstunden', () => {
@@ -223,9 +227,11 @@ describe('countActiveFilters', () => {
       maxPrice: 1000,
       minStars: 4,
       paperInToilet: true,
-      airports: ['FRA'],
+      airports: ['MUC'],
       scoreLevels: { ...DEFAULT_FILTERS.scoreLevels, beach: 'excellent', food: 'good' },
     })
     expect(countActiveFilters(f)).toBe(6)
+    // Standard-Abflughafen Frankfurt zählt nicht als aktiver Filter
+    expect(countActiveFilters(filters({ airports: ['FRA'] }))).toBe(0)
   })
 })

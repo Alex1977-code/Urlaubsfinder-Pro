@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Filters, Offer, TripParams } from '../types'
 import { AIRPORTS, airportLabel } from '../data/airports'
 import { DESTINATION_AIRPORTS } from '../data/destinationAirports'
@@ -22,13 +22,10 @@ import {
   type LiveHotel,
   type LivePlace,
 } from '../lib/live'
-import { TripControls } from './SearchBar'
 
 /** Automatischer Suchbereich um den Zielort; wird bei 0 Treffern erweitert. */
 const BASE_RADIUS = 15000
 const EXTENDED_RADIUS = 40000
-
-const FLIGHT_HOUR_OPTIONS = [2, 3, 4, 5, 6, 8, 10, 12]
 
 const MAX_SHOWN = 60
 
@@ -49,24 +46,25 @@ function StarsInline({ stars }: { stars: number }) {
 
 export function LiveSearch({
   trip,
-  onTripChange,
   filters,
-  onMaxFlightHoursChange,
   offers,
+  query,
+  searchTrigger,
+  onQueryChange,
 }: {
   trip: TripParams
-  onTripChange: (trip: TripParams) => void
-  /** Die Filter der Seitenleiste; angewendet werden Sterne, Flugzeit, Strandnähe */
+  /** Die Filter der Seitenleiste; angewendet werden Sterne, Flugzeit, Strandnähe, Abflughafen */
   filters: Filters
-  /** Max. Flugzeit ändern (gleicher Filter wie in der Seitenleiste) */
-  onMaxFlightHoursChange: (hours: number | null) => void
   /** Angebotskatalog mit Live-Flugpreisen (für echte Flugpreise bekannter Routen) */
   offers: Offer[]
+  /** Suchbegriff aus der gemeinsamen Suchmaske */
+  query: string
+  /** Zähler: jede Erhöhung startet eine Suche (aus der gemeinsamen Suchmaske) */
+  searchTrigger: number
+  /** Suchfeld der gemeinsamen Maske aktualisieren (z. B. bei Ziel-Klick) */
+  onQueryChange: (query: string) => void
 }) {
-  const [query, setQuery] = useState('')
   const [usedRadius, setUsedRadius] = useState(BASE_RADIUS)
-  // Abflughafen der Live-Suche, Standard: Frankfurt
-  const [departure, setDeparture] = useState('FRA')
   const [status, setStatus] = useState<Status>('idle')
   const [error, setError] = useState('')
   const [place, setPlace] = useState<LivePlace | null>(null)
@@ -75,7 +73,8 @@ export function LiveSearch({
   const [sort, setSort] = useState<LiveSort>('distance')
   const abortRef = useRef<AbortController | null>(null)
 
-  const from = departure
+  // Abflughafen aus der Seitenleiste, Standard: Frankfurt
+  const from = filters.airports[0] ?? 'FRA'
   const fromAirport = AIRPORTS.find((airport) => airport.code === from)
 
   // Abgeleitet aus Ziel + Abflughafen (reagiert sofort auf Wechsel, ohne neue Abfrage)
@@ -260,70 +259,21 @@ export function LiveSearch({
     ? reachableDestinations(fromAirport, filters.maxFlightHours, DESTINATION_AIRPORTS)
     : []
 
+  // Suche wird über die gemeinsame Suchmaske ausgelöst
+  useEffect(() => {
+    if (searchTrigger > 0) void search()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTrigger])
+
   return (
     <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-900/5">
-      <h2 className="text-base font-bold text-slate-900">🌐 Live-Suche: alle Hotels eines Ziels</h2>
-      <p className="mt-1 text-sm text-slate-500">
-        Fragt in Echtzeit alle in OpenStreetMap erfassten Hotels ab – für jedes Ziel weltweit.
-        Ohne Zielangabe zeigt „Hotels laden“ alle Ziele innerhalb deiner max. Flugzeit ab{' '}
-        {airportLabel(from)}. Reisedaten und Filter (links) gelten wie bei den empfohlenen
-        Angeboten.
-      </p>
-
-      <form
-        className="mt-4 flex flex-col gap-2"
-        onSubmit={(e) => {
-          e.preventDefault()
-          void search()
-        }}
-      >
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Reiseziel – oder leer lassen für alle Ziele in Flugreichweite"
-            aria-label="Reiseziel für die Live-Suche (optional)"
-            className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-sky-500 focus:bg-white focus:ring-2 focus:ring-sky-200"
-          />
-          <select
-            value={filters.maxFlightHours === null ? '' : String(filters.maxFlightHours)}
-            onChange={(e) =>
-              onMaxFlightHoursChange(e.target.value === '' ? null : Number(e.target.value))
-            }
-            aria-label="Maximale Flugzeit"
-            className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-700 outline-none focus:border-sky-500"
-          >
-            <option value="">Max. Flugzeit: egal</option>
-            {FLIGHT_HOUR_OPTIONS.map((hours) => (
-              <option key={hours} value={hours}>
-                Max. Flugzeit: {hours} Std.
-              </option>
-            ))}
-          </select>
-          <select
-            value={departure}
-            onChange={(e) => setDeparture(e.target.value)}
-            aria-label="Abflughafen"
-            className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-700 outline-none focus:border-sky-500"
-          >
-            {AIRPORTS.map((airport) => (
-              <option key={airport.code} value={airport.code}>
-                ab {airport.city} ({airport.code})
-              </option>
-            ))}
-          </select>
-          <button
-            type="submit"
-            disabled={status === 'loading'}
-            className="rounded-xl bg-gradient-to-r from-sky-600 to-cyan-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-600/30 transition hover:from-sky-700 hover:to-cyan-600 disabled:opacity-60"
-          >
-            {status === 'loading' ? 'Suche läuft …' : 'Hotels laden'}
-          </button>
-        </div>
-
-        <TripControls trip={trip} onTripChange={onTripChange} showBaggage={true} />
-      </form>
+      {status === 'idle' && (
+        <p className="text-sm text-slate-500">
+          Klicke oben auf <strong>„Suchen“</strong> – mit Reiseziel lädt die Live-Suche alle dort
+          erfassten Hotels, ohne Reiseziel zeigt sie alle Ziele innerhalb deiner max. Flugzeit ab{' '}
+          {airportLabel(from)}.
+        </p>
+      )}
 
       {status === 'loading' && (
         <p className="mt-4 animate-pulse text-sm text-slate-500">
@@ -362,7 +312,7 @@ export function LiveSearch({
                     <button
                       type="button"
                       onClick={() => {
-                        setQuery(destination.name)
+                        onQueryChange(destination.name)
                         void runHotelSearch(destination.lat, destination.lon, destination.name)
                       }}
                       className="w-full rounded-xl border border-slate-200 bg-slate-50/60 px-3 py-2.5 text-left transition hover:border-sky-400 hover:bg-sky-50"
