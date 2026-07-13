@@ -16,6 +16,7 @@ const SORT_OPTIONS: { value: SortKey; label: string }[] = [
   { value: 'priceDesc', label: 'Preis absteigend' },
   { value: 'rating', label: 'Beste Bewertung' },
   { value: 'stars', label: 'Hotelkategorie' },
+  { value: 'flightAsc', label: 'Kürzeste Flugzeit' },
 ]
 
 export default function App() {

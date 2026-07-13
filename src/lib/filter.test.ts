@@ -155,6 +155,12 @@ describe('sortOffers', () => {
     expect(sortOffers([cheap, pricey], 'stars', filters())[0].id).toBe('pricey')
   })
 
+  it('sortiert nach kürzester Flugzeit', () => {
+    const nah = { ...baseOffer, id: 'nah', flightHours: 1.5 }
+    const fern = { ...baseOffer, id: 'fern', flightHours: 9 }
+    expect(sortOffers([fern, nah], 'flightAsc', filters()).map((o) => o.id)).toEqual(['nah', 'fern'])
+  })
+
   it('verändert das Original-Array nicht', () => {
     const input = [pricey, cheap]
     sortOffers(input, 'priceAsc', filters())

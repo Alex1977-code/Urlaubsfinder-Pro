@@ -34,6 +34,15 @@ const MAX_SHOWN = 60
 
 type Status = 'idle' | 'loading' | 'done' | 'error' | 'destinations'
 
+type LiveSort = 'distance' | 'priceAsc' | 'stars' | 'beach'
+
+const LIVE_SORT_OPTIONS: { value: LiveSort; label: string }[] = [
+  { value: 'distance', label: 'Empfehlung (Nähe zum Zentrum)' },
+  { value: 'priceAsc', label: 'Preis aufsteigend' },
+  { value: 'stars', label: 'Hotelkategorie' },
+  { value: 'beach', label: 'Strandnähe' },
+]
+
 function StarsInline({ stars }: { stars: number }) {
   return <span className="text-amber-400">{'★'.repeat(Math.round(stars))}</span>
 }
@@ -63,6 +72,7 @@ export function LiveSearch({
   const [place, setPlace] = useState<LivePlace | null>(null)
   const [hotels, setHotels] = useState<LiveHotel[]>([])
   const [includeUnrated, setIncludeUnrated] = useState(false)
+  const [sort, setSort] = useState<LiveSort>('distance')
   const abortRef = useRef<AbortController | null>(null)
 
   const from = departure
@@ -110,6 +120,20 @@ export function LiveSearch({
     filterByStars(hotels, filters.minStars, includeUnrated),
     filters.maxBeachDistance,
   )
+
+  // Sortierung (Standard: Nähe zum Zentrum, wie von Overpass geliefert)
+  const sortedHotels = [...filteredHotels].sort((a, b) => {
+    switch (sort) {
+      case 'priceAsc':
+        return priceFor(a).total - priceFor(b).total
+      case 'stars':
+        return (b.stars ?? -1) - (a.stars ?? -1) || a.distanceKm - b.distanceKm
+      case 'beach':
+        return (a.beachDistanceM ?? Infinity) - (b.beachDistanceM ?? Infinity)
+      default:
+        return a.distanceKm - b.distanceKm
+    }
+  })
   const overFlightLimit =
     filters.maxFlightHours !== null && flightHours !== null && flightHours > filters.maxFlightHours
 
@@ -400,14 +424,30 @@ export function LiveSearch({
                 </span>
               )}
             </h3>
-            <a
-              href={flightsSearchUrl(destinationLabel, from, trip)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-xl border border-sky-600 px-4 py-2 text-sm font-semibold text-sky-700 transition hover:bg-sky-50"
-            >
-              ✈️ Flugangebote nach {destinationLabel} ab {airportLabel(from)}
-            </a>
+            <div className="flex flex-wrap items-center gap-2">
+              <label className="flex items-center gap-2 text-sm text-slate-600">
+                Sortieren:
+                <select
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value as LiveSort)}
+                  className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-800 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
+                >
+                  {LIVE_SORT_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <a
+                href={flightsSearchUrl(destinationLabel, from, trip)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-xl border border-sky-600 px-4 py-2 text-sm font-semibold text-sky-700 transition hover:bg-sky-50"
+              >
+                ✈️ Flugangebote nach {destinationLabel} ab {airportLabel(from)}
+              </a>
+            </div>
           </div>
 
           <p className="mt-2 text-[11px] text-slate-400">
@@ -439,7 +479,7 @@ export function LiveSearch({
           ) : (
             <>
               <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-                {filteredHotels.slice(0, MAX_SHOWN).map((hotel) => (
+                {sortedHotels.slice(0, MAX_SHOWN).map((hotel) => (
                   <li
                     key={hotel.id}
                     className="flex flex-col gap-1.5 rounded-xl border border-slate-100 bg-slate-50/60 p-3"
