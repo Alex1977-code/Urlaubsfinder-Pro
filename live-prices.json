@@ -1,0 +1,1496 @@
+{
+  "updatedAt": "2026-11-14T11:35:53.006Z",
+  "currency": "EUR",
+  "source": "Travelpayouts/Aviasales",
+  "flights": {
+    "mallorca-playa-esperanza": {
+      "origin": "FRA",
+      "price": 52,
+      "month": "2026-12",
+      "departureAt": "2026-12-12",
+      "returnAt": "2026-12-19",
+      "months": {
+        "2026-11": {
+          "price": 110,
+          "departureAt": "2026-11-18",
+          "returnAt": "2026-11-25"
+        },
+        "2026-12": {
+          "price": 52,
+          "departureAt": "2026-12-12",
+          "returnAt": "2026-12-19"
+        },
+        "2027-01": {
+          "price": 121,
+          "departureAt": "2027-01-02",
+          "returnAt": "2027-01-09"
+        },
+        "2027-02": {
+          "price": 160,
+          "departureAt": "2027-02-18",
+          "returnAt": "2027-02-21"
+        },
+        "2027-04": {
+          "price": 142,
+          "departureAt": "2027-04-04",
+          "returnAt": "2027-04-06"
+        }
+      }
+    },
+    "kreta-blue-palace": {
+      "origin": "FRA",
+      "price": 245,
+      "month": "2026-11",
+      "departureAt": "2026-11-20",
+      "returnAt": "2026-11-23",
+      "months": {
+        "2026-11": {
+          "price": 245,
+          "departureAt": "2026-11-20",
+          "returnAt": "2026-11-23"
+        },
+        "2026-12": {
+          "price": 253,
+          "departureAt": "2026-12-03",
+          "returnAt": "2026-12-10"
+        }
+      }
+    },
+    "antalya-titanic-beach": {
+      "origin": "FRA",
+      "price": 133,
+      "month": "2026-12",
+      "departureAt": "2026-12-10",
+      "returnAt": "2026-12-17",
+      "months": {
+        "2026-11": {
+          "price": 188,
+          "departureAt": "2026-11-25",
+          "returnAt": "2026-11-30"
+        },
+        "2026-12": {
+          "price": 133,
+          "departureAt": "2026-12-10",
+          "returnAt": "2026-12-17"
+        },
+        "2027-01": {
+          "price": 172,
+          "departureAt": "2027-01-20",
+          "returnAt": "2027-01-30"
+        },
+        "2027-02": {
+          "price": 184,
+          "departureAt": "2027-02-22",
+          "returnAt": "2027-02-28"
+        },
+        "2027-04": {
+          "price": 165,
+          "departureAt": "2027-04-21",
+          "returnAt": "2027-04-29"
+        }
+      }
+    },
+    "hurghada-jaz-aquamarine": {
+      "origin": "FRA",
+      "price": 173,
+      "month": "2026-12",
+      "departureAt": "2026-12-15",
+      "returnAt": "2026-12-19",
+      "months": {
+        "2026-11": {
+          "price": 222,
+          "departureAt": "2026-11-14",
+          "returnAt": "2026-11-21"
+        },
+        "2026-12": {
+          "price": 173,
+          "departureAt": "2026-12-15",
+          "returnAt": "2026-12-19"
+        },
+        "2027-01": {
+          "price": 198,
+          "departureAt": "2027-01-05",
+          "returnAt": "2027-01-22"
+        },
+        "2027-02": {
+          "price": 214,
+          "departureAt": "2027-02-12",
+          "returnAt": "2027-02-22"
+        },
+        "2027-03": {
+          "price": 204,
+          "departureAt": "2027-03-07",
+          "returnAt": "2027-03-16"
+        }
+      }
+    },
+    "gran-canaria-lopesan": {
+      "origin": "FRA",
+      "price": 120,
+      "month": "2026-12",
+      "departureAt": "2026-12-06",
+      "returnAt": "2026-12-13",
+      "months": {
+        "2026-11": {
+          "price": 223,
+          "departureAt": "2026-11-24",
+          "returnAt": "2026-11-28"
+        },
+        "2026-12": {
+          "price": 120,
+          "departureAt": "2026-12-06",
+          "returnAt": "2026-12-13"
+        },
+        "2027-01": {
+          "price": 257,
+          "departureAt": "2027-01-05",
+          "returnAt": "2027-01-09"
+        },
+        "2027-02": {
+          "price": 151,
+          "departureAt": "2027-02-01",
+          "returnAt": "2027-02-07"
+        },
+        "2027-03": {
+          "price": 181,
+          "departureAt": "2027-03-02",
+          "returnAt": "2027-03-12"
+        }
+      }
+    },
+    "rhodos-mitsis-alila": {
+      "origin": "FRA",
+      "price": 225,
+      "month": "2027-03",
+      "departureAt": "2027-03-04",
+      "returnAt": "2027-03-18",
+      "months": {
+        "2026-11": {
+          "price": 265,
+          "departureAt": "2026-11-16",
+          "returnAt": "2026-11-30"
+        },
+        "2026-12": {
+          "price": 271,
+          "departureAt": "2026-12-03",
+          "returnAt": "2026-12-10"
+        },
+        "2027-03": {
+          "price": 225,
+          "departureAt": "2027-03-04",
+          "returnAt": "2027-03-18"
+        }
+      }
+    },
+    "zypern-olympic-lagoon": {
+      "origin": "FRA",
+      "price": 206,
+      "month": "2026-12",
+      "departureAt": "2026-12-03",
+      "returnAt": "2026-12-10",
+      "months": {
+        "2026-11": {
+          "price": 254,
+          "departureAt": "2026-11-17",
+          "returnAt": "2026-11-24"
+        },
+        "2026-12": {
+          "price": 206,
+          "departureAt": "2026-12-03",
+          "returnAt": "2026-12-10"
+        },
+        "2027-01": {
+          "price": 307,
+          "departureAt": "2027-01-04",
+          "returnAt": "2027-01-10"
+        }
+      }
+    },
+    "madeira-savoy-palace": {
+      "origin": "FRA",
+      "price": 156,
+      "month": "2026-12",
+      "departureAt": "2026-12-15",
+      "returnAt": "2026-12-22",
+      "months": {
+        "2026-11": {
+          "price": 253,
+          "departureAt": "2026-11-26",
+          "returnAt": "2026-11-28"
+        },
+        "2026-12": {
+          "price": 156,
+          "departureAt": "2026-12-15",
+          "returnAt": "2026-12-22"
+        },
+        "2027-01": {
+          "price": 162,
+          "departureAt": "2027-01-09",
+          "returnAt": "2027-01-22"
+        },
+        "2027-02": {
+          "price": 247,
+          "departureAt": "2027-02-21",
+          "returnAt": "2027-02-28"
+        },
+        "2027-03": {
+          "price": 196,
+          "departureAt": "2027-03-17",
+          "returnAt": "2027-03-20"
+        },
+        "2027-04": {
+          "price": 297,
+          "departureAt": "2027-04-01",
+          "returnAt": "2027-04-08"
+        }
+      }
+    },
+    "algarve-vila-vita": {
+      "origin": "FRA",
+      "price": 184,
+      "month": "2027-01",
+      "departureAt": "2027-01-13",
+      "returnAt": "2027-01-16",
+      "months": {
+        "2026-11": {
+          "price": 189,
+          "departureAt": "2026-11-18",
+          "returnAt": "2026-11-22"
+        },
+        "2026-12": {
+          "price": 195,
+          "departureAt": "2026-12-10",
+          "returnAt": "2026-12-17"
+        },
+        "2027-01": {
+          "price": 184,
+          "departureAt": "2027-01-13",
+          "returnAt": "2027-01-16"
+        }
+      }
+    },
+    "dubai-atlantis": {
+      "origin": "FRA",
+      "price": 307,
+      "month": "2027-02",
+      "departureAt": "2027-02-13",
+      "returnAt": "2027-02-20",
+      "months": {
+        "2026-11": {
+          "price": 365,
+          "departureAt": "2026-11-17",
+          "returnAt": "2026-11-25"
+        },
+        "2026-12": {
+          "price": 381,
+          "departureAt": "2026-12-10",
+          "returnAt": "2026-12-24"
+        },
+        "2027-01": {
+          "price": 334,
+          "departureAt": "2027-01-25",
+          "returnAt": "2027-01-30"
+        },
+        "2027-02": {
+          "price": 307,
+          "departureAt": "2027-02-13",
+          "returnAt": "2027-02-20"
+        },
+        "2027-03": {
+          "price": 399,
+          "departureAt": "2027-03-02",
+          "returnAt": "2027-03-31"
+        }
+      }
+    },
+    "malediven-kuramathi": {
+      "origin": "FRA",
+      "price": 572,
+      "month": "2027-01",
+      "departureAt": "2027-01-21",
+      "returnAt": "2027-01-29",
+      "months": {
+        "2026-11": {
+          "price": 606,
+          "departureAt": "2026-11-18",
+          "returnAt": "2026-11-24"
+        },
+        "2026-12": {
+          "price": 573,
+          "departureAt": "2026-12-08",
+          "returnAt": "2026-12-15"
+        },
+        "2027-01": {
+          "price": 572,
+          "departureAt": "2027-01-21",
+          "returnAt": "2027-01-29"
+        },
+        "2027-02": {
+          "price": 614,
+          "departureAt": "2027-02-09",
+          "returnAt": "2027-02-17"
+        },
+        "2027-03": {
+          "price": 649,
+          "departureAt": "2027-03-14",
+          "returnAt": "2027-03-29"
+        },
+        "2027-04": {
+          "price": 598,
+          "departureAt": "2027-04-08",
+          "returnAt": "2027-04-13"
+        }
+      }
+    },
+    "thailand-khaolak": {
+      "origin": "FRA",
+      "price": 483,
+      "month": "2026-12",
+      "departureAt": "2026-12-09",
+      "returnAt": "2026-12-24",
+      "months": {
+        "2026-11": {
+          "price": 585,
+          "departureAt": "2026-11-18",
+          "returnAt": "2026-11-24"
+        },
+        "2026-12": {
+          "price": 483,
+          "departureAt": "2026-12-09",
+          "returnAt": "2026-12-24"
+        },
+        "2027-01": {
+          "price": 574,
+          "departureAt": "2027-01-08",
+          "returnAt": "2027-01-29"
+        },
+        "2027-02": {
+          "price": 617,
+          "departureAt": "2027-02-17",
+          "returnAt": "2027-02-24"
+        },
+        "2027-03": {
+          "price": 555,
+          "departureAt": "2027-03-05",
+          "returnAt": "2027-03-19"
+        },
+        "2027-04": {
+          "price": 660,
+          "departureAt": "2027-04-01",
+          "returnAt": "2027-04-15"
+        }
+      }
+    },
+    "hurghada-dana-beach": {
+      "origin": "FRA",
+      "price": 173,
+      "month": "2026-12",
+      "departureAt": "2026-12-15",
+      "returnAt": "2026-12-19",
+      "months": {
+        "2026-11": {
+          "price": 222,
+          "departureAt": "2026-11-14",
+          "returnAt": "2026-11-21"
+        },
+        "2026-12": {
+          "price": 173,
+          "departureAt": "2026-12-15",
+          "returnAt": "2026-12-19"
+        },
+        "2027-01": {
+          "price": 198,
+          "departureAt": "2027-01-05",
+          "returnAt": "2027-01-22"
+        },
+        "2027-02": {
+          "price": 214,
+          "departureAt": "2027-02-12",
+          "returnAt": "2027-02-22"
+        },
+        "2027-03": {
+          "price": 204,
+          "departureAt": "2027-03-07",
+          "returnAt": "2027-03-16"
+        }
+      }
+    },
+    "mallorca-pure-salt": {
+      "origin": "FRA",
+      "price": 52,
+      "month": "2026-12",
+      "departureAt": "2026-12-12",
+      "returnAt": "2026-12-19",
+      "months": {
+        "2026-11": {
+          "price": 110,
+          "departureAt": "2026-11-18",
+          "returnAt": "2026-11-25"
+        },
+        "2026-12": {
+          "price": 52,
+          "departureAt": "2026-12-12",
+          "returnAt": "2026-12-19"
+        },
+        "2027-01": {
+          "price": 121,
+          "departureAt": "2027-01-02",
+          "returnAt": "2027-01-09"
+        },
+        "2027-02": {
+          "price": 160,
+          "departureAt": "2027-02-18",
+          "returnAt": "2027-02-21"
+        },
+        "2027-04": {
+          "price": 142,
+          "departureAt": "2027-04-04",
+          "returnAt": "2027-04-06"
+        }
+      }
+    },
+    "fuerteventura-rio-calma": {
+      "origin": "FRA",
+      "price": 143,
+      "month": "2027-01",
+      "departureAt": "2027-01-15",
+      "returnAt": "2027-01-22",
+      "months": {
+        "2026-11": {
+          "price": 179,
+          "departureAt": "2026-11-14",
+          "returnAt": "2026-11-21"
+        },
+        "2027-01": {
+          "price": 143,
+          "departureAt": "2027-01-15",
+          "returnAt": "2027-01-22"
+        }
+      }
+    },
+    "ibiza-grand-palladium": {
+      "origin": "FRA",
+      "price": 134,
+      "month": "2026-12",
+      "departureAt": "2026-12-12",
+      "returnAt": "2026-12-15",
+      "months": {
+        "2026-12": {
+          "price": 134,
+          "departureAt": "2026-12-12",
+          "returnAt": "2026-12-15"
+        },
+        "2027-01": {
+          "price": 217,
+          "departureAt": "2027-01-08",
+          "returnAt": "2027-01-11"
+        }
+      }
+    },
+    "kroatien-valamar": {
+      "origin": "FRA",
+      "price": 190,
+      "month": "2027-01",
+      "departureAt": "2027-01-05",
+      "returnAt": "2027-01-10",
+      "months": {
+        "2027-01": {
+          "price": 190,
+          "departureAt": "2027-01-05",
+          "returnAt": "2027-01-10"
+        }
+      }
+    },
+    "bulgarien-goldstrand": {
+      "origin": "FRA",
+      "price": 73,
+      "month": "2027-01",
+      "departureAt": "2027-01-13",
+      "returnAt": "2027-01-15",
+      "months": {
+        "2026-12": {
+          "price": 75,
+          "departureAt": "2026-12-09",
+          "returnAt": "2026-12-14"
+        },
+        "2027-01": {
+          "price": 73,
+          "departureAt": "2027-01-13",
+          "returnAt": "2027-01-15"
+        }
+      }
+    },
+    "marokko-agadir": {
+      "origin": "FRA",
+      "price": 74,
+      "month": "2026-12",
+      "departureAt": "2026-12-12",
+      "returnAt": "2026-12-19",
+      "months": {
+        "2026-11": {
+          "price": 158,
+          "departureAt": "2026-11-21",
+          "returnAt": "2026-11-28"
+        },
+        "2026-12": {
+          "price": 74,
+          "departureAt": "2026-12-12",
+          "returnAt": "2026-12-19"
+        },
+        "2027-02": {
+          "price": 198,
+          "departureAt": "2027-02-10",
+          "returnAt": "2027-02-17"
+        }
+      }
+    },
+    "kreta-minoa-palace": {
+      "origin": "FRA",
+      "price": 279,
+      "month": "2026-12",
+      "departureAt": "2026-12-03",
+      "returnAt": "2026-12-10",
+      "months": {
+        "2026-12": {
+          "price": 279,
+          "departureAt": "2026-12-03",
+          "returnAt": "2026-12-10"
+        }
+      }
+    },
+    "tuerkei-side-barut": {
+      "origin": "FRA",
+      "price": 133,
+      "month": "2026-12",
+      "departureAt": "2026-12-10",
+      "returnAt": "2026-12-17",
+      "months": {
+        "2026-11": {
+          "price": 188,
+          "departureAt": "2026-11-25",
+          "returnAt": "2026-11-30"
+        },
+        "2026-12": {
+          "price": 133,
+          "departureAt": "2026-12-10",
+          "returnAt": "2026-12-17"
+        },
+        "2027-01": {
+          "price": 172,
+          "departureAt": "2027-01-20",
+          "returnAt": "2027-01-30"
+        },
+        "2027-02": {
+          "price": 184,
+          "departureAt": "2027-02-22",
+          "returnAt": "2027-02-28"
+        },
+        "2027-04": {
+          "price": 165,
+          "departureAt": "2027-04-21",
+          "returnAt": "2027-04-29"
+        }
+      }
+    },
+    "aegypten-marsa-alam": {
+      "origin": "FRA",
+      "price": 462,
+      "month": "2027-01",
+      "departureAt": "2027-01-01",
+      "returnAt": "2027-01-10",
+      "months": {
+        "2027-01": {
+          "price": 462,
+          "departureAt": "2027-01-01",
+          "returnAt": "2027-01-10"
+        }
+      }
+    },
+    "santorini-katikies": {
+      "origin": "FRA",
+      "price": 232,
+      "month": "2027-01",
+      "departureAt": "2027-01-27",
+      "returnAt": "2027-01-30",
+      "months": {
+        "2026-12": {
+          "price": 427,
+          "departureAt": "2026-12-19",
+          "returnAt": "2026-12-22"
+        },
+        "2027-01": {
+          "price": 232,
+          "departureAt": "2027-01-27",
+          "returnAt": "2027-01-30"
+        },
+        "2027-02": {
+          "price": 246,
+          "departureAt": "2027-02-13",
+          "returnAt": "2027-02-16"
+        },
+        "2027-04": {
+          "price": 256,
+          "departureAt": "2027-04-21",
+          "returnAt": "2027-04-24"
+        }
+      }
+    },
+    "korfu-marbella": {
+      "origin": "FRA",
+      "price": 305,
+      "month": "2026-11",
+      "departureAt": "2026-11-21",
+      "returnAt": "2026-11-26",
+      "months": {
+        "2026-11": {
+          "price": 305,
+          "departureAt": "2026-11-21",
+          "returnAt": "2026-11-26"
+        }
+      }
+    },
+    "chalkidiki-sani": {
+      "origin": "FRA",
+      "price": 171,
+      "month": "2027-01",
+      "departureAt": "2027-01-16",
+      "returnAt": "2027-01-22",
+      "months": {
+        "2026-11": {
+          "price": 203,
+          "departureAt": "2026-11-14",
+          "returnAt": "2026-11-20"
+        },
+        "2026-12": {
+          "price": 256,
+          "departureAt": "2026-12-02",
+          "returnAt": "2026-12-06"
+        },
+        "2027-01": {
+          "price": 171,
+          "departureAt": "2027-01-16",
+          "returnAt": "2027-01-22"
+        },
+        "2027-03": {
+          "price": 216,
+          "departureAt": "2027-03-04",
+          "returnAt": "2027-03-09"
+        }
+      }
+    },
+    "marbella-don-carlos": {
+      "origin": "FRA",
+      "price": 154,
+      "month": "2026-12",
+      "departureAt": "2026-12-19",
+      "returnAt": "2026-12-20",
+      "months": {
+        "2026-11": {
+          "price": 165,
+          "departureAt": "2026-11-16",
+          "returnAt": "2026-11-21"
+        },
+        "2026-12": {
+          "price": 154,
+          "departureAt": "2026-12-19",
+          "returnAt": "2026-12-20"
+        },
+        "2027-01": {
+          "price": 192,
+          "departureAt": "2027-01-05",
+          "returnAt": "2027-01-09"
+        }
+      }
+    },
+    "lanzarote-princesa-yaiza": {
+      "origin": "FRA",
+      "price": 211,
+      "month": "2026-12",
+      "departureAt": "2026-12-01",
+      "returnAt": "2026-12-06",
+      "months": {
+        "2026-11": {
+          "price": 229,
+          "departureAt": "2026-11-24",
+          "returnAt": "2026-11-29"
+        },
+        "2026-12": {
+          "price": 211,
+          "departureAt": "2026-12-01",
+          "returnAt": "2026-12-06"
+        }
+      }
+    },
+    "sizilien-taormina": {
+      "origin": "FRA",
+      "price": 38,
+      "month": "2026-12",
+      "departureAt": "2026-12-06",
+      "returnAt": "2026-12-10",
+      "months": {
+        "2026-11": {
+          "price": 108,
+          "departureAt": "2026-11-27",
+          "returnAt": "2026-11-29"
+        },
+        "2026-12": {
+          "price": 38,
+          "departureAt": "2026-12-06",
+          "returnAt": "2026-12-10"
+        }
+      }
+    },
+    "sardinien-chia-laguna": {
+      "origin": "FRA",
+      "price": 270,
+      "month": "2026-11",
+      "departureAt": "2026-11-14",
+      "returnAt": "2026-11-20",
+      "months": {
+        "2026-11": {
+          "price": 270,
+          "departureAt": "2026-11-14",
+          "returnAt": "2026-11-20"
+        }
+      }
+    },
+    "djerba-radisson": {
+      "origin": "FRA",
+      "price": 238,
+      "month": "2026-12",
+      "departureAt": "2026-12-07",
+      "returnAt": "2026-12-12",
+      "months": {
+        "2026-11": {
+          "price": 743,
+          "departureAt": "2026-11-14",
+          "returnAt": "2026-11-16"
+        },
+        "2026-12": {
+          "price": 238,
+          "departureAt": "2026-12-07",
+          "returnAt": "2026-12-12"
+        }
+      }
+    },
+    "kapverden-riu-sal": {
+      "origin": "FRA",
+      "price": 348,
+      "month": "2026-12",
+      "departureAt": "2026-12-11",
+      "returnAt": "2026-12-20",
+      "months": {
+        "2026-12": {
+          "price": 348,
+          "departureAt": "2026-12-11",
+          "returnAt": "2026-12-20"
+        },
+        "2027-03": {
+          "price": 388,
+          "departureAt": "2027-03-01",
+          "returnAt": "2027-03-15"
+        }
+      }
+    },
+    "domrep-punta-cana": {
+      "origin": "FRA",
+      "price": 683,
+      "month": "2027-04",
+      "departureAt": "2027-04-12",
+      "returnAt": "2027-04-26",
+      "months": {
+        "2026-11": {
+          "price": 797,
+          "departureAt": "2026-11-17",
+          "returnAt": "2026-11-26"
+        },
+        "2026-12": {
+          "price": 763,
+          "departureAt": "2026-12-01",
+          "returnAt": "2026-12-10"
+        },
+        "2027-01": {
+          "price": 694,
+          "departureAt": "2027-01-11",
+          "returnAt": "2027-01-21"
+        },
+        "2027-02": {
+          "price": 735,
+          "departureAt": "2027-02-03",
+          "returnAt": "2027-02-13"
+        },
+        "2027-03": {
+          "price": 778,
+          "departureAt": "2027-03-02",
+          "returnAt": "2027-03-25"
+        },
+        "2027-04": {
+          "price": 683,
+          "departureAt": "2027-04-12",
+          "returnAt": "2027-04-26"
+        }
+      }
+    },
+    "mallorca-cala-millor": {
+      "origin": "FRA",
+      "price": 52,
+      "month": "2026-12",
+      "departureAt": "2026-12-12",
+      "returnAt": "2026-12-19",
+      "months": {
+        "2026-11": {
+          "price": 110,
+          "departureAt": "2026-11-18",
+          "returnAt": "2026-11-25"
+        },
+        "2026-12": {
+          "price": 52,
+          "departureAt": "2026-12-12",
+          "returnAt": "2026-12-19"
+        },
+        "2027-01": {
+          "price": 121,
+          "departureAt": "2027-01-02",
+          "returnAt": "2027-01-09"
+        },
+        "2027-02": {
+          "price": 160,
+          "departureAt": "2027-02-18",
+          "returnAt": "2027-02-21"
+        },
+        "2027-04": {
+          "price": 142,
+          "departureAt": "2027-04-04",
+          "returnAt": "2027-04-06"
+        }
+      }
+    },
+    "mallorca-jumeirah-soller": {
+      "origin": "FRA",
+      "price": 52,
+      "month": "2026-12",
+      "departureAt": "2026-12-12",
+      "returnAt": "2026-12-19",
+      "months": {
+        "2026-11": {
+          "price": 110,
+          "departureAt": "2026-11-18",
+          "returnAt": "2026-11-25"
+        },
+        "2026-12": {
+          "price": 52,
+          "departureAt": "2026-12-12",
+          "returnAt": "2026-12-19"
+        },
+        "2027-01": {
+          "price": 121,
+          "departureAt": "2027-01-02",
+          "returnAt": "2027-01-09"
+        },
+        "2027-02": {
+          "price": 160,
+          "departureAt": "2027-02-18",
+          "returnAt": "2027-02-21"
+        },
+        "2027-04": {
+          "price": 142,
+          "departureAt": "2027-04-04",
+          "returnAt": "2027-04-06"
+        }
+      }
+    },
+    "costa-brava-rigat": {
+      "origin": "FRA",
+      "price": 54,
+      "month": "2026-12",
+      "departureAt": "2026-12-14",
+      "returnAt": "2026-12-17",
+      "months": {
+        "2026-11": {
+          "price": 116,
+          "departureAt": "2026-11-23",
+          "returnAt": "2026-11-29"
+        },
+        "2026-12": {
+          "price": 54,
+          "departureAt": "2026-12-14",
+          "returnAt": "2026-12-17"
+        },
+        "2027-01": {
+          "price": 104,
+          "departureAt": "2027-01-04",
+          "returnAt": "2027-01-11"
+        },
+        "2027-02": {
+          "price": 56,
+          "departureAt": "2027-02-01",
+          "returnAt": "2027-02-07"
+        },
+        "2027-03": {
+          "price": 86,
+          "departureAt": "2027-03-01",
+          "returnAt": "2027-03-10"
+        }
+      }
+    },
+    "barcelona-hotel-arts": {
+      "origin": "FRA",
+      "price": 54,
+      "month": "2026-12",
+      "departureAt": "2026-12-14",
+      "returnAt": "2026-12-17",
+      "months": {
+        "2026-11": {
+          "price": 116,
+          "departureAt": "2026-11-23",
+          "returnAt": "2026-11-29"
+        },
+        "2026-12": {
+          "price": 54,
+          "departureAt": "2026-12-14",
+          "returnAt": "2026-12-17"
+        },
+        "2027-01": {
+          "price": 104,
+          "departureAt": "2027-01-04",
+          "returnAt": "2027-01-11"
+        },
+        "2027-02": {
+          "price": 56,
+          "departureAt": "2027-02-01",
+          "returnAt": "2027-02-07"
+        },
+        "2027-03": {
+          "price": 86,
+          "departureAt": "2027-03-01",
+          "returnAt": "2027-03-10"
+        }
+      }
+    },
+    "kreta-creta-maris": {
+      "origin": "FRA",
+      "price": 245,
+      "month": "2026-11",
+      "departureAt": "2026-11-20",
+      "returnAt": "2026-11-23",
+      "months": {
+        "2026-11": {
+          "price": 245,
+          "departureAt": "2026-11-20",
+          "returnAt": "2026-11-23"
+        },
+        "2026-12": {
+          "price": 253,
+          "departureAt": "2026-12-03",
+          "returnAt": "2026-12-10"
+        }
+      }
+    },
+    "belek-regnum-carya": {
+      "origin": "FRA",
+      "price": 133,
+      "month": "2026-12",
+      "departureAt": "2026-12-10",
+      "returnAt": "2026-12-17",
+      "months": {
+        "2026-11": {
+          "price": 188,
+          "departureAt": "2026-11-25",
+          "returnAt": "2026-11-30"
+        },
+        "2026-12": {
+          "price": 133,
+          "departureAt": "2026-12-10",
+          "returnAt": "2026-12-17"
+        },
+        "2027-01": {
+          "price": 172,
+          "departureAt": "2027-01-20",
+          "returnAt": "2027-01-30"
+        },
+        "2027-02": {
+          "price": 184,
+          "departureAt": "2027-02-22",
+          "returnAt": "2027-02-28"
+        },
+        "2027-04": {
+          "price": 165,
+          "departureAt": "2027-04-21",
+          "returnAt": "2027-04-29"
+        }
+      }
+    },
+    "sharm-rixos": {
+      "origin": "FRA",
+      "price": 156,
+      "month": "2026-12",
+      "departureAt": "2026-12-09",
+      "returnAt": "2026-12-20",
+      "months": {
+        "2026-11": {
+          "price": 232,
+          "departureAt": "2026-11-16",
+          "returnAt": "2026-11-24"
+        },
+        "2026-12": {
+          "price": 156,
+          "departureAt": "2026-12-09",
+          "returnAt": "2026-12-20"
+        },
+        "2027-01": {
+          "price": 164,
+          "departureAt": "2027-01-11",
+          "returnAt": "2027-01-21"
+        },
+        "2027-02": {
+          "price": 197,
+          "departureAt": "2027-02-18",
+          "returnAt": "2027-02-25"
+        }
+      }
+    },
+    "amalfi-santa-caterina": {
+      "origin": "FRA",
+      "price": 101,
+      "month": "2026-12",
+      "departureAt": "2026-12-11",
+      "returnAt": "2026-12-14",
+      "months": {
+        "2026-12": {
+          "price": 101,
+          "departureAt": "2026-12-11",
+          "returnAt": "2026-12-14"
+        }
+      }
+    },
+    "kalabrien-falkensteiner": {
+      "origin": "FRA",
+      "price": 104,
+      "month": "2027-01",
+      "departureAt": "2027-01-01",
+      "returnAt": "2027-01-10",
+      "months": {
+        "2026-12": {
+          "price": 182,
+          "departureAt": "2026-12-22",
+          "returnAt": "2026-12-29"
+        },
+        "2027-01": {
+          "price": 104,
+          "departureAt": "2027-01-01",
+          "returnAt": "2027-01-10"
+        }
+      }
+    },
+    "jesolo-almar": {
+      "origin": "FRA",
+      "price": 120,
+      "month": "2026-12",
+      "departureAt": "2026-12-17",
+      "returnAt": "2026-12-20",
+      "months": {
+        "2026-11": {
+          "price": 172,
+          "departureAt": "2026-11-26",
+          "returnAt": "2026-11-29"
+        },
+        "2026-12": {
+          "price": 120,
+          "departureAt": "2026-12-17",
+          "returnAt": "2026-12-20"
+        },
+        "2027-01": {
+          "price": 201,
+          "departureAt": "2027-01-05",
+          "returnAt": "2027-01-09"
+        },
+        "2027-04": {
+          "price": 165,
+          "departureAt": "2027-04-23",
+          "returnAt": "2027-04-25"
+        }
+      }
+    },
+    "montenegro-splendid": {
+      "origin": "FRA",
+      "price": 258,
+      "month": "2026-12",
+      "departureAt": "2026-12-04",
+      "returnAt": "2026-12-06",
+      "months": {
+        "2026-12": {
+          "price": 258,
+          "departureAt": "2026-12-04",
+          "returnAt": "2026-12-06"
+        },
+        "2027-01": {
+          "price": 293,
+          "departureAt": "2027-01-04",
+          "returnAt": "2027-01-08"
+        }
+      }
+    },
+    "cascais-villa-italia": {
+      "origin": "FRA",
+      "price": 125,
+      "month": "2027-01",
+      "departureAt": "2027-01-07",
+      "returnAt": "2027-01-14",
+      "months": {
+        "2026-11": {
+          "price": 225,
+          "departureAt": "2026-11-15",
+          "returnAt": "2026-11-23"
+        },
+        "2026-12": {
+          "price": 138,
+          "departureAt": "2026-12-11",
+          "returnAt": "2026-12-21"
+        },
+        "2027-01": {
+          "price": 125,
+          "departureAt": "2027-01-07",
+          "returnAt": "2027-01-14"
+        },
+        "2027-02": {
+          "price": 128,
+          "departureAt": "2027-02-17",
+          "returnAt": "2027-02-24"
+        },
+        "2027-03": {
+          "price": 222,
+          "departureAt": "2027-03-20",
+          "returnAt": "2027-03-22"
+        }
+      }
+    },
+    "benidorm-asia-gardens": {
+      "origin": "FRA",
+      "price": 39,
+      "month": "2026-12",
+      "departureAt": "2026-12-06",
+      "returnAt": "2026-12-13",
+      "months": {
+        "2026-11": {
+          "price": 63,
+          "departureAt": "2026-11-28",
+          "returnAt": "2026-11-29"
+        },
+        "2026-12": {
+          "price": 39,
+          "departureAt": "2026-12-06",
+          "returnAt": "2026-12-13"
+        },
+        "2027-01": {
+          "price": 110,
+          "departureAt": "2027-01-02",
+          "returnAt": "2027-01-07"
+        },
+        "2027-04": {
+          "price": 189,
+          "departureAt": "2027-04-09",
+          "returnAt": "2027-04-12"
+        }
+      }
+    },
+    "bodrum-titanic": {
+      "origin": "FRA",
+      "price": 171,
+      "month": "2026-12",
+      "departureAt": "2026-12-05",
+      "returnAt": "2026-12-12",
+      "months": {
+        "2026-11": {
+          "price": 197,
+          "departureAt": "2026-11-23",
+          "returnAt": "2026-11-30"
+        },
+        "2026-12": {
+          "price": 171,
+          "departureAt": "2026-12-05",
+          "returnAt": "2026-12-12"
+        },
+        "2027-01": {
+          "price": 227,
+          "departureAt": "2027-01-05",
+          "returnAt": "2027-01-12"
+        }
+      }
+    },
+    "alanya-delphin": {
+      "origin": "FRA",
+      "price": 227,
+      "month": "2027-04",
+      "departureAt": "2027-04-07",
+      "returnAt": "2027-04-14",
+      "months": {
+        "2027-04": {
+          "price": 227,
+          "departureAt": "2027-04-07",
+          "returnAt": "2027-04-14"
+        }
+      }
+    },
+    "el-gouna-steigenberger": {
+      "origin": "FRA",
+      "price": 173,
+      "month": "2026-12",
+      "departureAt": "2026-12-15",
+      "returnAt": "2026-12-19",
+      "months": {
+        "2026-11": {
+          "price": 222,
+          "departureAt": "2026-11-14",
+          "returnAt": "2026-11-21"
+        },
+        "2026-12": {
+          "price": 173,
+          "departureAt": "2026-12-15",
+          "returnAt": "2026-12-19"
+        },
+        "2027-01": {
+          "price": 198,
+          "departureAt": "2027-01-05",
+          "returnAt": "2027-01-22"
+        },
+        "2027-02": {
+          "price": 214,
+          "departureAt": "2027-02-12",
+          "returnAt": "2027-02-22"
+        },
+        "2027-03": {
+          "price": 204,
+          "departureAt": "2027-03-07",
+          "returnAt": "2027-03-16"
+        }
+      }
+    },
+    "bali-laguna": {
+      "origin": "FRA",
+      "price": 564,
+      "month": "2026-12",
+      "departureAt": "2026-12-04",
+      "returnAt": "2026-12-25",
+      "months": {
+        "2026-12": {
+          "price": 564,
+          "departureAt": "2026-12-04",
+          "returnAt": "2026-12-25"
+        },
+        "2027-01": {
+          "price": 585,
+          "departureAt": "2027-01-01",
+          "returnAt": "2027-01-17"
+        },
+        "2027-02": {
+          "price": 707,
+          "departureAt": "2027-02-03",
+          "returnAt": "2027-02-14"
+        },
+        "2027-03": {
+          "price": 660,
+          "departureAt": "2027-03-05",
+          "returnAt": "2027-03-19"
+        },
+        "2027-04": {
+          "price": 720,
+          "departureAt": "2027-04-19",
+          "returnAt": "2027-04-29"
+        }
+      }
+    },
+    "phuket-katathani": {
+      "origin": "FRA",
+      "price": 483,
+      "month": "2026-12",
+      "departureAt": "2026-12-09",
+      "returnAt": "2026-12-24",
+      "months": {
+        "2026-11": {
+          "price": 585,
+          "departureAt": "2026-11-18",
+          "returnAt": "2026-11-24"
+        },
+        "2026-12": {
+          "price": 483,
+          "departureAt": "2026-12-09",
+          "returnAt": "2026-12-24"
+        },
+        "2027-01": {
+          "price": 574,
+          "departureAt": "2027-01-08",
+          "returnAt": "2027-01-29"
+        },
+        "2027-02": {
+          "price": 617,
+          "departureAt": "2027-02-17",
+          "returnAt": "2027-02-24"
+        },
+        "2027-03": {
+          "price": 555,
+          "departureAt": "2027-03-05",
+          "returnAt": "2027-03-19"
+        },
+        "2027-04": {
+          "price": 660,
+          "departureAt": "2027-04-01",
+          "returnAt": "2027-04-15"
+        }
+      }
+    },
+    "mauritius-lux-belle-mare": {
+      "origin": "FRA",
+      "price": 592,
+      "month": "2026-12",
+      "departureAt": "2026-12-09",
+      "returnAt": "2026-12-24",
+      "months": {
+        "2026-11": {
+          "price": 808,
+          "departureAt": "2026-11-21",
+          "returnAt": "2026-11-23"
+        },
+        "2026-12": {
+          "price": 592,
+          "departureAt": "2026-12-09",
+          "returnAt": "2026-12-24"
+        },
+        "2027-01": {
+          "price": 648,
+          "departureAt": "2027-01-21",
+          "returnAt": "2027-01-29"
+        }
+      }
+    },
+    "sansibar-riu": {
+      "origin": "FRA",
+      "price": 548,
+      "month": "2027-03",
+      "departureAt": "2027-03-09",
+      "returnAt": "2027-03-27",
+      "months": {
+        "2026-11": {
+          "price": 614,
+          "departureAt": "2026-11-20",
+          "returnAt": "2026-11-27"
+        },
+        "2026-12": {
+          "price": 583,
+          "departureAt": "2026-12-01",
+          "returnAt": "2026-12-09"
+        },
+        "2027-01": {
+          "price": 576,
+          "departureAt": "2027-01-13",
+          "returnAt": "2027-01-28"
+        },
+        "2027-02": {
+          "price": 608,
+          "departureAt": "2027-02-03",
+          "returnAt": "2027-02-13"
+        },
+        "2027-03": {
+          "price": 548,
+          "departureAt": "2027-03-09",
+          "returnAt": "2027-03-27"
+        }
+      }
+    },
+    "oman-shangri-la": {
+      "origin": "FRA",
+      "price": 278,
+      "month": "2026-12",
+      "departureAt": "2026-12-10",
+      "returnAt": "2026-12-20",
+      "months": {
+        "2026-11": {
+          "price": 299,
+          "departureAt": "2026-11-19",
+          "returnAt": "2026-11-27"
+        },
+        "2026-12": {
+          "price": 278,
+          "departureAt": "2026-12-10",
+          "returnAt": "2026-12-20"
+        }
+      }
+    },
+    "split-meridien": {
+      "origin": "FRA",
+      "price": 195,
+      "month": "2027-01",
+      "departureAt": "2027-01-04",
+      "returnAt": "2027-01-09",
+      "months": {
+        "2026-11": {
+          "price": 239,
+          "departureAt": "2026-11-27",
+          "returnAt": "2026-11-28"
+        },
+        "2026-12": {
+          "price": 196,
+          "departureAt": "2026-12-06",
+          "returnAt": "2026-12-13"
+        },
+        "2027-01": {
+          "price": 195,
+          "departureAt": "2027-01-04",
+          "returnAt": "2027-01-09"
+        }
+      }
+    },
+    "cannes-majestic": {
+      "origin": "FRA",
+      "price": 216,
+      "month": "2026-12",
+      "departureAt": "2026-12-15",
+      "returnAt": "2026-12-22",
+      "months": {
+        "2026-12": {
+          "price": 216,
+          "departureAt": "2026-12-15",
+          "returnAt": "2026-12-22"
+        },
+        "2027-01": {
+          "price": 253,
+          "departureAt": "2027-01-04",
+          "returnAt": "2027-01-10"
+        },
+        "2027-03": {
+          "price": 221,
+          "departureAt": "2027-03-14",
+          "returnAt": "2027-03-18"
+        }
+      }
+    },
+    "malta-phoenicia": {
+      "origin": "FRA",
+      "price": 127,
+      "month": "2026-12",
+      "departureAt": "2026-12-02",
+      "returnAt": "2026-12-06",
+      "months": {
+        "2026-11": {
+          "price": 157,
+          "departureAt": "2026-11-23",
+          "returnAt": "2026-11-27"
+        },
+        "2026-12": {
+          "price": 127,
+          "departureAt": "2026-12-02",
+          "returnAt": "2026-12-06"
+        },
+        "2027-03": {
+          "price": 216,
+          "departureAt": "2027-03-23",
+          "returnAt": "2027-03-30"
+        },
+        "2027-04": {
+          "price": 167,
+          "departureAt": "2027-04-08",
+          "returnAt": "2027-04-14"
+        }
+      }
+    }
+  }
+}
